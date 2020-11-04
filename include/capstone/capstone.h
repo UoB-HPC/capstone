@@ -121,7 +121,7 @@ typedef enum cs_mode {
 	CS_MODE_M68K_030 = 1 << 4, ///< M68K 68030 mode
 	CS_MODE_M68K_040 = 1 << 5, ///< M68K 68040 mode
 	CS_MODE_M68K_060 = 1 << 6, ///< M68K 68060 mode
-	CS_MODE_BIG_ENDIAN = 1 << 31,	///< big-endian mode
+	CS_MODE_BIG_ENDIAN = 1U << 31,	///< big-endian mode
 	CS_MODE_MIPS32 = CS_MODE_32,	///< Mips32 ISA (Mips)
 	CS_MODE_MIPS64 = CS_MODE_64,	///< Mips64 ISA (Mips)
 	CS_MODE_M680X_6301 = 1 << 1, ///< M680X Hitachi 6301,6303 mode
@@ -380,7 +380,7 @@ typedef enum cs_err {
 	CS_ERR_SKIPDATA, ///< Access irrelevant data for "data" instruction in SKIPDATA mode
 	CS_ERR_X86_ATT,  ///< X86 AT&T syntax is unsupported (opt-out at compile time)
 	CS_ERR_X86_INTEL, ///< X86 Intel syntax is unsupported (opt-out at compile time)
-	CS_ERR_X86_MASM, ///< X86 Intel syntax is unsupported (opt-out at compile time)
+	CS_ERR_X86_MASM, ///< X86 Masm syntax is unsupported (opt-out at compile time)
 } cs_err;
 
 /**

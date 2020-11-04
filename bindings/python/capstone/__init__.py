@@ -539,6 +539,9 @@ class CsInsn(object):
             self._raw.detail = ctypes.pointer(all_info.detail._type_())
             ctypes.memmove(ctypes.byref(self._raw.detail[0]), ctypes.byref(all_info.detail[0]), ctypes.sizeof(type(all_info.detail[0])))
 
+    def __repr__(self):
+        return '<CsInsn 0x%x [%s]: %s %s>' % (self.address, self.bytes.hex(), self.mnemonic, self.op_str)
+            
     # return instruction's ID.
     @property
     def id(self):
@@ -1053,11 +1056,11 @@ class Cs(object):
             print(code)
             code = code.encode()
             print(code)'''
-        # Hi, Hacker! Unicorn's memory accessors give you back bytearrays, but they
-        # cause TypeErrors when you hand them into Capstone.
+        # Pass a bytearray by reference
+        size = len(code)
         if isinstance(code, bytearray):
-            code = bytes(code)
-        res = _cs.cs_disasm(self.csh, code, len(code), offset, count, ctypes.byref(all_insn))
+            code = ctypes.byref(ctypes.c_char.from_buffer(code))
+        res = _cs.cs_disasm(self.csh, code, size, offset, count, ctypes.byref(all_insn))
         if res > 0:
             try:
                 for i in range(res):
@@ -1081,11 +1084,11 @@ class Cs(object):
             raise CsError(CS_ERR_DIET)
 
         all_insn = ctypes.POINTER(_cs_insn)()
-        # Hi, Hacker! Unicorn's memory accessors give you back bytearrays, but they
-        # cause TypeErrors when you hand them into Capstone.
+        size = len(code)
+        # Pass a bytearray by reference
         if isinstance(code, bytearray):
-            code = bytes(code)
-        res = _cs.cs_disasm(self.csh, code, len(code), offset, count, ctypes.byref(all_insn))
+            code = ctypes.byref(ctypes.c_char.from_buffer(code))
+        res = _cs.cs_disasm(self.csh, code, size, offset, count, ctypes.byref(all_insn))
         if res > 0:
             try:
                 for i in range(res):

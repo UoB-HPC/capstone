@@ -22,6 +22,11 @@ endif
 
 ifeq ($(CROSS),)
 RANLIB ?= ranlib
+else ifeq ($(ANDROID), 1)
+CC = $(CROSS)/../../bin/clang
+AR = $(CROSS)/ar
+RANLIB = $(CROSS)/ranlib
+STRIP = $(CROSS)/strip
 else
 CC = $(CROSS)gcc
 AR = $(CROSS)ar
@@ -83,10 +88,10 @@ LIBDATADIR = $(LIBDIR)
 
 ifndef USE_GENERIC_LIBDATADIR
 ifeq ($(UNAME_S), FreeBSD)
-LIBDATADIR = $(PREFIX)/libdata
+LIBDATADIR = $(DESTDIR)$(PREFIX)/libdata
 endif
 ifeq ($(UNAME_S), DragonFly)
-LIBDATADIR = $(PREFIX)/libdata
+LIBDATADIR = $(DESTDIR)$(PREFIX)/libdata
 endif
 endif
 
@@ -424,22 +429,27 @@ endif
 	$(INSTALL_DATA) include/capstone/*.h $(DESTDIR)$(INCDIR)/$(LIBNAME)
 	mkdir -p $(PKGCFGDIR)
 	$(INSTALL_DATA) $(PKGCFGF) $(PKGCFGDIR)
+ifeq (,$(findstring yes,$(CAPSTONE_BUILD_CORE_ONLY)))
 	mkdir -p $(BINDIR)
 	$(INSTALL_LIB) cstool/cstool $(BINDIR)
+endif
 
 uninstall:
 	rm -rf $(DESTDIR)$(INCDIR)/$(LIBNAME)
 	rm -f $(LIBDIR)/lib$(LIBNAME).*
 	rm -f $(PKGCFGDIR)/$(LIBNAME).pc
+ifeq (,$(findstring yes,$(CAPSTONE_BUILD_CORE_ONLY)))
 	rm -f $(BINDIR)/cstool
+endif
 
 clean:
 	rm -f $(LIBOBJ)
 	rm -f $(BLDIR)/lib$(LIBNAME).* $(BLDIR)/$(LIBNAME).pc
 	rm -f $(PKGCFGF)
-	$(MAKE) -C cstool clean
+	[ "${ANDROID}" = "1" ] && rm -rf android-ndk-* || true
 
 ifeq (,$(findstring yes,$(CAPSTONE_BUILD_CORE_ONLY)))
+	$(MAKE) -C cstool clean
 	$(MAKE) -C tests clean
 	$(MAKE) -C suite/fuzz clean
 	rm -f $(BLDIR)/tests/lib$(LIBNAME).$(EXT)
