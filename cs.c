@@ -1240,7 +1240,9 @@ size_t CAPSTONE_API cs_disasm(csh ud, const uint8_t *buffer, size_t size, uint64
 			handle->insn_id(handle, insn_cache, mci.Opcode);
 
 			handle->printer(&mci, &ss, handle->printer_info);
+
 			fill_insn(handle, insn_cache, &ss, &mci, handle->post_printer, buffer);
+			insn_cache->opcode = mci.Opcode;
 
 			// adjust for pseudo opcode (X86)
 			if (handle->arch == CS_ARCH_X86 && insn_cache->id != X86_INS_VCMP)
@@ -1446,7 +1448,9 @@ bool CAPSTONE_API cs_disasm_iter(csh ud, const uint8_t **code, size_t *size,
 
 		handle->printer(&mci, &ss, handle->printer_info);
 
+
 		fill_insn(handle, insn, &ss, &mci, handle->post_printer, *code);
+		insn->opcode = mci.Opcode;
 
 		// adjust for pseudo opcode (X86)
 		if (handle->arch == CS_ARCH_X86)
