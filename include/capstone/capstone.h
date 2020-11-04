@@ -378,6 +378,9 @@ typedef struct cs_insn {
 	/// NOTE 2: when in Skipdata mode, or when detail mode is OFF, even if this pointer
 	///     is not NULL, its content is still irrelevant.
 	cs_detail *detail;
+
+	/// The internal opcode of this instruction
+	unsigned int opcode;
 } cs_insn;
 
 
