@@ -29,7 +29,7 @@ static const char * const reg_name_maps[] = {
   	"xzr",
 
   	"za",
-	
+
   	"b0",
   	"b1",
   	"b2",
@@ -442,6 +442,8 @@ static const char * const insn_name_maps[] = {
 	"dc",
 	"at",
 	"tlbi",
+	"smstart",
+  	"smstop",
 };
 
 const char *AArch64_insn_name(csh handle, unsigned int id)
