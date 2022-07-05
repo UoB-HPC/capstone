@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/homebrew/bin/python3
 # print list of instructions LLVM inc files, for Capstone disassembler.
 # this will be put into capstone/<arch>.h
 # by Nguyen Anh Quynh, 2019

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/homebrew/bin/python3
 # convert LLVM GenInstrInfo.inc for Capstone disassembler.
 # by Nguyen Anh Quynh, 2019
 

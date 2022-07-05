@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/homebrew/bin/python3
 # print MappingInsn.inc file from LLVM GenAsmMatcher.inc, for Capstone disassembler.
 # by Nguyen Anh Quynh, 2019
 
@@ -175,7 +175,7 @@ lines = f.readlines()
 f.close()
 
 count = 0
-last_mnem = None
+last_mnem = ''
 
 # 1st enum is register enum
 for line in lines:
