@@ -51,6 +51,8 @@ static DecodeStatus DecodeGPR64RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeGPR64spRegisterClass(MCInst *Inst,
 		unsigned RegNo, uint64_t Address, const void *Decoder);
+static DecodeStatus DecodeMatrixIndexGPR32_12_15RegisterClass(MCInst *Inst,
+        unsigned RegNo, uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeGPR32RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeGPR32spRegisterClass(MCInst *Inst,
@@ -79,6 +81,11 @@ static DecodeStatus DecodeZPR3RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeZPR4RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
+template <unsigned NumBitsForTile>
+static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo, 
+		uint64_t Address, const void *Decoder);
+static DecodeStatus DecodeMatrixTileListRegisterClass(MCInst *Inst,
+        unsigned RegMask, uint64_t Address, const void *Decoder);
 static DecodeStatus DecodePPRRegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodePPR_3bRegisterClass(MCInst *Inst, unsigned RegNo,
@@ -165,6 +172,12 @@ static DecodeStatus DecodeGPR64commonRegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Addr, const void *Decoder);
 static DecodeStatus DecodeFPR128_loRegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Addr, const void *Decoder);
+static DecodeStatus DecodeSVCROp(MCInst *Inst, unsigned Imm, uint64_t Address, 
+		const void *Decoder);
+static DecodeStatus DecodeCPYMemOpInstruction(MCInst *Inst, uint32_t insn,
+        uint64_t Addr, const void *Decoder);
+static DecodeStatus DecodeSETMemOpInstruction(MCInst *Inst, uint32_t insn,
+        uint64_t Addr, const void *Decoder);
 
 
 static bool Check(DecodeStatus *Out, DecodeStatus In)
@@ -241,6 +254,87 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
 
 	// Calling the auto-generated decoder function.
 	result = decodeInstruction_4(DecoderTable32, MI, insn, Address);
+
+	// Init new MCOperand to be used in switch below.
+	// Kind RegVal set inside a case when needed.
+	MCOperand *Op;
+	switch (MCInst_getOpcode(MI)) {
+    	default:
+    	  break;
+    	// For Scalable Matrix Extension (SME) instructions that have an implicit
+    	// operand for the accumulator (ZA) which isn't encoded, manually insert
+    	// operand.
+    	case AArch64::LDR_ZA:
+    	case AArch64::STR_ZA: {
+		  Op->Kind = kRegister;
+		  Op->RegVal = AArch64_ZA;
+		  MCInst_insert0(MI, 0, Op)
+    	  // Spill and fill instructions have a single immediate used for both the
+    	  // vector select offset and optional memory offset. Replicate the decoded
+    	  // immediate.
+    	  const MCOperand &Imm4Op = MCInst_getOperand(MI, 2);
+    	  assert(MCOperand_isImm(Imm4Op) && "Unexpected operand type!");
+    	  MCInst_addOperand2(MI, Imm4Op);
+    	  break;
+    	}
+    	case AArch64::LD1_MXIPXX_H_B:
+    	case AArch64::LD1_MXIPXX_V_B:
+    	case AArch64::ST1_MXIPXX_H_B:
+    	case AArch64::ST1_MXIPXX_V_B:
+    	case AArch64::INSERT_MXIPZ_H_B:
+    	case AArch64::INSERT_MXIPZ_V_B:
+    	  // e.g.
+    	  // MOVA ZA0<HV>.B[<Ws>, <imm>], <Pg>/M, <Zn>.B
+    	  //      ^ insert implicit 8-bit element tile
+		  Op->Kind = kRegister;
+		  Op->RegVal = AArch64_ZAB0;
+		  MCInst_insert0(MI, 0, Op);
+    	  break;
+    	case AArch64::EXTRACT_ZPMXI_H_B:
+    	case AArch64::EXTRACT_ZPMXI_V_B:
+    	  // MOVA <Zd>.B, <Pg>/M, ZA0<HV>.B[<Ws>, <imm>]
+    	  //                      ^ insert implicit 8-bit element tile
+		  Op->Kind = kRegister;
+		  Op->RegVal = AArch64_ZAB0;
+		  MCInst_insert0(MI, 2, Op);
+    	  break;
+    	case AArch64::LD1_MXIPXX_H_Q:
+    	case AArch64::LD1_MXIPXX_V_Q:
+    	case AArch64::ST1_MXIPXX_H_Q:
+    	case AArch64::ST1_MXIPXX_V_Q:
+    	  // 128-bit load/store have implicit zero vector index.
+		  Op->Kind = kImmediate;
+		  Op->ImmVal = 0;
+		  MCInst_insert0(MI, 2, Op);
+    	  break;
+    	// 128-bit mova have implicit zero vector index.
+    	case AArch64::INSERT_MXIPZ_H_Q:
+    	case AArch64::INSERT_MXIPZ_V_Q:
+		  Op->Kind = kImmediate;
+		  Op->ImmVal = 0;
+		  MCInst_insert0(MI, 2, Op);
+    	  break;
+    	case AArch64::EXTRACT_ZPMXI_H_Q:
+    	case AArch64::EXTRACT_ZPMXI_V_Q:
+		  Op->Kind = kImmediate;
+		  Op->ImmVal = 0;
+		  MCInst_addOperand2(MI, Op);
+    	  break;
+    	case AArch64::SMOVvi8to32_idx0:
+    	case AArch64::SMOVvi8to64_idx0:
+    	case AArch64::SMOVvi16to32_idx0:
+    	case AArch64::SMOVvi16to64_idx0:
+    	case AArch64::SMOVvi32to64_idx0:
+    	case AArch64::UMOVvi8_idx0:
+    	case AArch64::UMOVvi16_idx0:
+    	case AArch64::UMOVvi32_idx0:
+    	case AArch64::UMOVvi64_idx0:
+		  Op->Kind = kImmediate;
+		  Op->ImmVal = 0;
+		  MCInst_addOperand2(MI, Op);
+    	  break;
+    }
+
 	if (result != MCDisassembler_Fail) {
 		*Size = 4;
 
