@@ -2114,6 +2114,15 @@ static DecodeStatus DecodeSVEIncDecImm(MCInst *Inst, unsigned Imm,
 	return Success;
 }
 
+static DecodeStatus DecodeSVCROp(MCInst *Inst, unsigned Imm, uint64_t Address,
+        const void *Decoder) {
+	if (lookupSVCRByEncoding(Imm)) {
+		MCOperand_CreateImm0(Inst, Imm);
+    	return Success;
+  	}
+  	return Fail;
+}
+
 void AArch64_init(MCRegisterInfo *MRI)
 {
 	/*
