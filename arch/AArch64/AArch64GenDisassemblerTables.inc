@@ -21696,7 +21696,8 @@ static const uint8_t DecoderTableFallback32[] = {
   0
 };
 
-static bool checkDecoderPredicate(unsigned Idx, const FeatureBitset &Bits) {
+static bool checkDecoderPredicate(unsigned Idx, MCInst *MI)
+{
   switch (Idx) {
   default: /* llvm_unreachable("Invalid index!");*/ 
   case 0:

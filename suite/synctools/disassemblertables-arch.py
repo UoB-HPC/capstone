@@ -103,7 +103,7 @@ for line in lines:
             line2 = line2.replace('Bits[', 'AArch64_getFeatureBits(')
             line2 = line2.replace(']', ')')
 
-    elif 'static bool checkDecoderPredicate(unsigned Idx, const FeatureBitset& Bits) {' in line2:
+    elif 'static bool checkDecoderPredicate(unsigned Idx, const FeatureBitset &Bits) {' in line2:
         line2 = 'static bool checkDecoderPredicate(unsigned Idx, MCInst *MI)\n{'
 
     elif 'checkDecoderPredicate(PIdx, ' in line2:
