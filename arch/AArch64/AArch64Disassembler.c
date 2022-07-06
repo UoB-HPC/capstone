@@ -543,6 +543,25 @@ static DecodeStatus DecodeGPR64spRegisterClass(MCInst *Inst, unsigned RegNo,
 	return Success;
 }
 
+
+static const unsigned MatrixIndexGPR32_12_15DecoderTable[] = {
+	AArch64_W12, AArch64_W13, AArch64_W14, AArch64_W15
+};
+
+static DecodeStatus DecodeMatrixIndexGPR32_12_15RegisterClass(MCInst *Inst,
+		unsigned RegNo, uint64_t Addr, const void *Decoder) 
+{
+	unsigned Register;
+
+	if (RegNo > 3)
+    	return Fail;
+	
+	Register = MatrixIndexGPR32_12_15DecoderTable[RegNo];
+	MCOperand_CreateReg0(Inst, Register);
+
+  	return Success;
+}
+
 static const unsigned GPR32DecoderTable[] = {
 	AArch64_W0,  AArch64_W1,  AArch64_W2,  AArch64_W3,  AArch64_W4,
 	AArch64_W5,  AArch64_W6,  AArch64_W7,  AArch64_W8,  AArch64_W9,
