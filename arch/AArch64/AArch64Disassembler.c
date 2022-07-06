@@ -81,9 +81,8 @@ static DecodeStatus DecodeZPR3RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeZPR4RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
-template <unsigned NumBitsForTile>
 static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo, 
-		uint64_t Address, const void *Decoder);
+		uint64_t Address, const void *Decoder, unsigned NumBitsForTile);
 static DecodeStatus DecodeMatrixTileListRegisterClass(MCInst *Inst,
         unsigned RegMask, uint64_t Address, const void *Decoder);
 static DecodeStatus DecodePPRRegisterClass(MCInst *Inst, unsigned RegNo,
@@ -749,9 +748,8 @@ static const std::vector<std::vector<unsigned>>
          AArch64_ZAQ12, AArch64_ZAQ13, AArch64_ZAQ14, AArch64_ZAQ15}
 };
 
-template <unsigned NumBitsForTile>
 static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo,
-		uint64_t Address, const void *Decoder) {
+		uint64_t Address, const void *Decoder, unsigned NumBitsForTile) {
 	unsigned LastReg = (1 << NumBitsForTile) - 1;
 	if (RegNo > LastReg)
     	return Fail;

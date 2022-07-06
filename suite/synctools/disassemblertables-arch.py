@@ -223,6 +223,10 @@ for line in lines:
             param = extract_brackets(line2)
             line2 = del_brackets(line2)
             line2 = line2.replace(', Decoder)', ', Decoder, %s)' %param)
+        elif 'DecodeMatrixTile<' in line2:
+            param = extract_brackets(line2)
+            line2 = del_brackets(line2)
+            line2 = line2.replace(', Decoder)', ', Decoder, %s)' %param)
         if 'DecodeComplete = false; ' in line2:
             line2 = line2.replace('DecodeComplete = false; ', '')
     elif 'decodeUImmOperand<' in line2 or 'decodeSImmOperand<' in line2 :

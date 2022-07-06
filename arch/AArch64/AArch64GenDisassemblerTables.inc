@@ -21871,7 +21871,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 5: \
     tmp = fieldname(insn, 3, 1); \
-    if (!Check(&S, DecodeMatrixTile<1>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 1))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 3); \
@@ -21887,7 +21887,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 8, 1); \
-    if (!Check(&S, DecodeMatrixTile<1>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 1))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 5, 3); \
@@ -21895,7 +21895,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 7: \
     tmp = fieldname(insn, 3, 1); \
-    if (!Check(&S, DecodeMatrixTile<1>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 1))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 3); \
@@ -21909,7 +21909,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 8: \
     tmp = fieldname(insn, 0, 2); \
-    if (!Check(&S, DecodeMatrixTile<2>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 2))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 3); \
@@ -21921,7 +21921,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 9: \
     tmp = fieldname(insn, 2, 2); \
-    if (!Check(&S, DecodeMatrixTile<2>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 2))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 2); \
@@ -21937,7 +21937,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 7, 2); \
-    if (!Check(&S, DecodeMatrixTile<2>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 2))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 5, 2); \
@@ -21945,7 +21945,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 11: \
     tmp = fieldname(insn, 0, 2); \
-    if (!Check(&S, DecodeMatrixTile<2>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 2))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 3); \
@@ -21955,7 +21955,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 12: \
     tmp = fieldname(insn, 2, 2); \
-    if (!Check(&S, DecodeMatrixTile<2>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 2))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 2); \
@@ -21969,7 +21969,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 13: \
     tmp = fieldname(insn, 0, 3); \
-    if (!Check(&S, DecodeMatrixTile<3>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 3))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 3); \
@@ -21981,7 +21981,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 14: \
     tmp = fieldname(insn, 1, 3); \
-    if (!Check(&S, DecodeMatrixTile<3>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 3))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 1); \
@@ -21993,7 +21993,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 15: \
     tmp = fieldname(insn, 0, 4); \
-    if (!Check(&S, DecodeMatrixTile<4>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 4))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
@@ -22007,7 +22007,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 6, 3); \
-    if (!Check(&S, DecodeMatrixTile<3>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 3))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 5, 1); \
@@ -22019,13 +22019,13 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 5, 4); \
-    if (!Check(&S, DecodeMatrixTile<4>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 4))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     return S; \
   case 18: \
     tmp = fieldname(insn, 0, 3); \
-    if (!Check(&S, DecodeMatrixTile<3>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 3))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
     if (!Check(&S, DecodePPR_3bRegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 3); \
@@ -22035,7 +22035,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 19: \
     tmp = fieldname(insn, 1, 3); \
-    if (!Check(&S, DecodeMatrixTile<3>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 3))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 0, 1); \
@@ -22057,7 +22057,7 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
     return S; \
   case 21: \
     tmp = fieldname(insn, 0, 4); \
-    if (!Check(&S, DecodeMatrixTile<4>(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
+    if (!Check(&S, DecodeMatrixTile(MI, tmp, Address, Decoder, 4))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 13, 2); \
     if (!Check(&S, DecodeMatrixIndexGPR32_12_15RegisterClass(MI, tmp, Address, Decoder))) { return MCDisassembler_Fail; } \
     tmp = fieldname(insn, 10, 3); \
