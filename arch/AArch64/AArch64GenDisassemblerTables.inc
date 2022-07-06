@@ -21821,7 +21821,6 @@ static bool checkDecoderPredicate(unsigned Idx, MCInst *MI)
   }
 }
 
-template <typename InsnType>
 #define DecodeToMCInst(fname, fieldname, InsnType) \
 static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *MI, \
 		uint64_t Address, bool *Decoder) \
@@ -27194,7 +27193,6 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
   } \
 }
 
-template <typename InsnType>
 #define DecodeInstruction(fname, fieldname, decoder, InsnType) \
 static DecodeStatus fname(const uint8_t DecodeTable[], MCInst *MI, \
 		InsnType insn, uint64_t Address) \

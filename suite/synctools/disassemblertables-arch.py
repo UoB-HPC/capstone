@@ -109,7 +109,7 @@ for line in lines:
     elif 'checkDecoderPredicate(PIdx, ' in line2:
         line2 = line2.replace(', Bits)', ', MI)')
 
-    elif 'template<typename InsnType>' in line2:
+    elif 'template <typename InsnType>' in line2:
         continue
 
     elif 'static DecodeStatus decodeToMCInst' in line2:
