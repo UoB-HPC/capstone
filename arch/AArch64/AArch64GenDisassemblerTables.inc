@@ -23,6 +23,14 @@ static InsnType fname(InsnType insn, unsigned startBit, unsigned numBits) \
   return (insn & fieldMask) >> startBit; \
 }
 
+// Helper function for inserting bits extracted from an encoded instruction into
+// a field.
+#define insertBits(fname, InsnType) \
+static void fname(InsnType *field, InsnType bits, unsigned startBit, unsigned numBits) \
+{ \
+    field |= (InsnType)bits << startBit; \
+} \
+
 static const uint8_t DecoderTable32[] = {
 /* 0 */       MCD_OPC_ExtractField, 26, 3,  // Inst{28-26} ...
 /* 3 */       MCD_OPC_FilterValue, 0, 0, 7, 0, // Skip to: 1800

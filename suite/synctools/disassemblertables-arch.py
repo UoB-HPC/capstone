@@ -37,6 +37,14 @@ static InsnType fname(InsnType insn, unsigned startBit, unsigned numBits) \\
     fieldMask = (((InsnType)1 << numBits) - 1) << startBit; \\
   return (insn & fieldMask) >> startBit; \\
 }
+
+// Helper function for inserting bits extracted from an encoded instruction into
+// a field.
+#define insertBits(fname, InsnType) \\
+static void fname(InsnType *field, InsnType bits, unsigned startBit, unsigned numBits) \\
+{ \\
+    field |= (InsnType)bits << startBit; \\
+} \\
 """)
 
 
@@ -243,7 +251,7 @@ for line in lines:
         continue
     elif 'TmpType tmp;' in line2:
         line2 = line2.replace('TmpType', 'InsnType')
-        
+
     line2 = line2.replace('::', '_')
     print_line(line2)
 
