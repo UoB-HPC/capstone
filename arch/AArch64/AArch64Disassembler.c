@@ -727,6 +727,39 @@ static DecodeStatus DecodeZPR4RegisterClass(MCInst *Inst, unsigned RegNo,
 	return Success;
 }
 
+static DecodeStatus DecodeMatrixTileListRegisterClass(MCInst *Inst,
+		unsigned RegMask, uint64_t Address, const void *Decoder) {
+	if (RegMask > 0xFF)
+    	return Fail;
+	
+	MCOperand_CreateImm0(Inst, RegMask);
+	return Success;
+}
+
+static const std::vector<std::vector<unsigned>>
+    MatrixZATileDecoderTable = {
+        {AArch64_ZAB0},
+        {AArch64_ZAH0, AArch64_ZAH1},
+        {AArch64_ZAS0, AArch64_ZAS1, AArch64_ZAS2, AArch64_ZAS3},
+        {AArch64_ZAD0, AArch64_ZAD1, AArch64_ZAD2, AArch64_ZAD3,
+         AArch64_ZAD4, AArch64_ZAD5, AArch64_ZAD6, AArch64_ZAD7},
+        {AArch64_ZAQ0, AArch64_ZAQ1, AArch64_ZAQ2, AArch64_ZAQ3,
+         AArch64_ZAQ4, AArch64_ZAQ5, AArch64_ZAQ6, AArch64_ZAQ7,
+         AArch64_ZAQ8, AArch64_ZAQ9, AArch64_ZAQ10, AArch64_ZAQ11,
+         AArch64_ZAQ12, AArch64_ZAQ13, AArch64_ZAQ14, AArch64_ZAQ15}
+};
+
+template <unsigned NumBitsForTile>
+static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo,
+		uint64_t Address, const void *Decoder) {
+	unsigned LastReg = (1 << NumBitsForTile) - 1;
+	if (RegNo > LastReg)
+    	return Fail;
+	MCOperand_CreateReg0(Inst, MatrixZATileDecoderTable[NumBitsForTile][RegNo]);
+	return Success;
+}
+
+
 static const unsigned PPRDecoderTable[] = {
 	AArch64_P0,  AArch64_P1,  AArch64_P2,  AArch64_P3,
 	AArch64_P4,  AArch64_P5,  AArch64_P6,  AArch64_P7,
