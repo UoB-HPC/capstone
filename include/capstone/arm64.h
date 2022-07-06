@@ -1128,6 +1128,7 @@ typedef enum arm64_op_type {
   ARM64_OP_REG_MSR,	///< MSR register operand.
   ARM64_OP_PSTATE,	///< PState operand.
   ARM64_OP_SYS,		///< SYS operand for IC/DC/AT/TLBI instructions.
+  ARM64_OP_SVCR,  ///< SVCR operand for MSR SVCR instructions.
   ARM64_OP_PREFETCH,	///< Prefetch operand (PRFM).
   ARM64_OP_BARRIER,	///< Memory barrier operand (ISB/DMB/DSB instructions).
 } arm64_op_type;
@@ -1353,6 +1354,15 @@ typedef enum arm64_sys_op {
   ARM64_IC_IALLU,
   ARM64_IC_IVAU,
 } arm64_sys_op;
+
+/// SVCR operands
+typedef enum arm64_svcr_op {
+  ARM64_SVCR_INVALID = 0,
+
+  ARM64_SVCR_SVCRSM = 0x1,
+  ARM64_SVCR_SVCRSMZA = 0x3,
+  ARM64_SVCR_SVCRZA = 0x2,
+} arm64_svcr_op;
 
 /// Prefetch operations (PRFM)
 typedef enum arm64_prefetch_op {
@@ -1760,6 +1770,7 @@ typedef struct cs_arm64_op {
     arm64_pstate pstate; ///< PState field of MSR instruction.
     arm64_sys_op sys;	 ///< IC/DC/AT/TLBI operation (see arm64_ic_op,
 			 ///< arm64_dc_op, arm64_at_op, arm64_tlbi_op)
+    arm64_svcr_op svcr; ///< MSR SVCR instruction variant.
     arm64_prefetch_op prefetch; ///< PRFM operation.
     arm64_barrier_op
 	barrier; ///< Memory barrier operation (ISB/DMB/DSB instructions).
