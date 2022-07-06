@@ -27316,7 +27316,6 @@ static DecodeStatus fname(const uint8_t DecodeTable[], MCInst *MI, \
 }
 
 
-} // end namespace llvm
 
 FieldFromInstruction(fieldFromInstruction_4, uint32_t)
 DecodeToMCInst(decodeToMCInst_4, fieldFromInstruction_4, uint32_t)

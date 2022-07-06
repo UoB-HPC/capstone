@@ -84,7 +84,7 @@ for line in lines:
     elif skip_print and 'static const uint8_t DecoderTable' in line2:
         skip_print = False
 
-    elif 'End llvm namespace' in line2:
+    elif 'end namespace llvm' in line2:
         # done
         break
 
