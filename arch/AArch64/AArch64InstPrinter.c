@@ -2200,6 +2200,178 @@ static void printComplexRotationOp(MCInst *MI, unsigned OpNum, SStream *O, int64
 	op_addImm(MI, (Val * Angle) + Remainder);
 }
 
+static void printSVCROp(MCInst *MI, unsigned OpNum, SStream *O)
+{
+	MCOperand *MO = MCInst_getOperand(MI, OpNum);
+  	assert(MCOperand_isImm(MO) && "Unexpected operand type!");
+  	unsigned svcrop = MCOperand_getImm(MO);
+	const auto *SVCR = lookupSVCRByEncoding(svcrop)
+  	assert(SVCR && "Unexpected SVCR operand!");
+	SStream_concat0(O, SVCR->Name);
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_SVCR;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].svcr = SVCR->Encoding;
+		MI->flat_insn->detail->arm64.op_count++;
+	}
+}
+
+static void printMatrix(MCInst *MI, unsigned OpNum, SStream *O, int EltSize)
+{
+	MCOperand *RegOp = MCInst_getOperand(MI, OpNum);
+  	assert(MCOperand_isReg(RegOp) && "Unexpected operand type!");
+	unsigned Reg = MCOperand_getReg(RegOp);
+
+	SStream_concat0(O, getRegisterName(Reg, AArch64_NoRegAltName));
+	const char *sizeStr;
+  	switch (EltSize) {
+  	case 0:
+	  sizeStr = "";
+  	  break;
+  	case 8:
+  	  sizeStr = ".b";
+  	  break;
+  	case 16:
+  	  sizeStr = ".h";
+  	  break;
+  	case 32:
+  	  sizeStr = ".s";
+  	  break;
+  	case 64:
+  	  sizeStr = ".d";
+  	  break;
+  	case 128:
+  	  sizeStr = ".q";
+  	  break;
+  	default:
+  	  llvm_unreachable("Unsupported element size");
+  	}
+	SStream_concat0(O, sizeStr);
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = Reg;
+		MI->flat_insn->detail->arm64.op_count++;
+	}
+}
+
+static void printMatrixIndex(MCInst *MI, unsigned OpNum, SStream *O)
+{
+	printInt64(O, MCOperand_getImm(MCInst_getOperand(MI, OpNum)));
+}
+
+static void printMatrixTile(MCInst *MI, unsigned OpNum, SStream *O)
+{
+	MCOperand *RegOp = MCInst_getOperand(MI, OpNum);
+  	assert(MCOperand_isReg(RegOp) && "Unexpected operand type!");
+	unsigned Reg = MCOperand_getReg(RegOp);
+  	SStream_concat0(O, getRegisterName(Reg, AArch64_NoRegAltName));
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = Reg;
+		MI->flat_insn->detail->arm64.op_count++;
+	}
+}
+
+static void printMatrixTileVector(MCInst *MI, unsigned OpNum, SStream *O, bool IsVertical)
+{
+	MCOperand *RegOp = MCInst_getOperand(MI, OpNum);
+  	assert(MCOperand_isReg(RegOp) && "Unexpected operand type!");
+	unsigned Reg = MCOperand_getReg(RegOp);
+	const char *RegName = getRegisterName(Reg, AArch64_NoRegAltName);
+
+  	// Insert the horizontal/vertical flag before the suffix.
+  	// StringRef Base, Suffix;
+	const char *Base;
+	const char *Suffix;
+  	std::tie(Base, Suffix) = RegName.split('.');
+	SStream_concat0(O, Base);
+	SStream_concat0(O, (IsVertical ? "v." : "h."));
+	SStream_concat0(O, Suffix);
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = Reg;
+		MI->flat_insn->detail->arm64.op_count++;
+	}
+}
+
+static const unsigned MatrixZADRegisterTable[] = {
+  AArch64_ZAD0, AArch64_ZAD1, AArch64_ZAD2, AArch64_ZAD3,
+  AArch64_ZAD4, AArch64_ZAD5, AArch64_ZAD6, AArch64_ZAD7
+};
+
+static void printMatrixTileList(MCInst *MI, unsigned OpNum, SStream *O){
+	unsigned MaxRegs = 8;
+	unsigned RegMask = MCOperand_getImm(MCInst_getOperand(MI, OpNum));
+
+	unsigned NumRegs = 0;
+	for (unsigned I = 0; I < MaxRegs; ++I)
+		if ((RegMask & (1 << I)) != 0)
+			++NumRegs;
+
+	SStream_concat0(O, "{");
+	unsigned Printed = 0;
+	for (unsigned I = 0; I < MaxRegs; ++I) {
+		unsigned Reg = RegMask & (1 << I);
+		if (Reg == 0)
+			continue;
+		SStream_concat0(O, getRegisterName(MatrixZADRegisterTable[I], AArch64_NoRegAltName));
+
+		if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
+
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = MatrixZADRegisterTable[I];
+			MI->flat_insn->detail->arm64.op_count++;
+		}
+
+		if (Printed + 1 != NumRegs)
+			SStream_concat0(O, ", ");
+		++Printed;
+	}
+	SStream_concat0(O, "}");
+}
+
 static void printSVEPattern(MCInst *MI, unsigned OpNum, SStream *O)
 {
 	unsigned Val = MCOperand_getImm(MCInst_getOperand(MI, OpNum));
