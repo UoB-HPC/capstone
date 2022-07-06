@@ -2147,6 +2147,29 @@ static DecodeStatus DecodeCPYMemOpInstruction(MCInst *Inst, uint32_t insn,
   return Success;
 }
 
+static DecodeStatus DecodeSETMemOpInstruction(MCInst *Inst, uint32_t insn,
+        uint64_t Addr, const void *Decoder) {
+  	unsigned Rd = fieldFromInstruction_4(insn, 0, 5);
+  	unsigned Rm = fieldFromInstruction_4(insn, 16, 5);
+  	unsigned Rn = fieldFromInstruction_4(insn, 5, 5);
+
+  	// None of the registers may alias: if they do, then the instruction is not
+  	// merely unpredictable but actually entirely unallocated.
+  	if (Rd == Rm || Rm == Rn || Rd == Rn)
+    	return Fail;
+
+  	// Rd and Rn (not Rm) register operands are written back, so they appear
+  	// twice in the operand list, once as outputs and once as inputs.
+  	if (!DecodeGPR64commonRegisterClass(Inst, Rd, Addr, Decoder) ||
+      	!DecodeGPR64RegisterClass(Inst, Rn, Addr, Decoder) ||
+      	!DecodeGPR64commonRegisterClass(Inst, Rd, Addr, Decoder) ||
+      	!DecodeGPR64RegisterClass(Inst, Rn, Addr, Decoder) ||
+      	!DecodeGPR64RegisterClass(Inst, Rm, Addr, Decoder))
+    	return Fail;
+
+  	return Success;
+}
+
 void AArch64_init(MCRegisterInfo *MRI)
 {
 	/*
