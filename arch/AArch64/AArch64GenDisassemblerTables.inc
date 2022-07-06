@@ -21825,8 +21825,7 @@ static bool checkDecoderPredicate(unsigned Idx, MCInst *MI)
 static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *MI, \
 		uint64_t Address, bool *Decoder) \
 { \
-  using TmpType = std_conditional_t<std_is_integral<InsnType>_value, InsnType, uint64_t>; \
-  TmpType tmp; \
+  InsnType tmp; \
   switch (Idx) { \
   default: /* llvm_unreachable("Invalid index!");*/  \
   case 0: \

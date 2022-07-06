@@ -239,7 +239,11 @@ for line in lines:
     elif 'MI = TmpMI;' in line2:
         line2 = ''
         #line2 = line2.replace('TmpMI', '&TmpMI')
-
+    elif 'using TmpType = std::conditional' in line2:
+        continue
+    elif 'TmpType tmp;' in line2:
+        line2 = line2.replace('TmpType', 'InsnType')
+        
     line2 = line2.replace('::', '_')
     print_line(line2)
 
