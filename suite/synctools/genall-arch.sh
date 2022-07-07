@@ -12,7 +12,7 @@ ARCH=$3
 echo "Generating ${ARCH}GenAsmWriter.inc"
 ./asmwriter.py $1/${ARCH}GenAsmWriter.inc ${ARCH}GenAsmWriter.inc ${ARCH}GenRegisterName.inc ${ARCH}
 
-echo "Generating ${ARCH}MappingInsnName.inc"
+echo "Generating ${ARCH}MappingInsnName.inc (Copy comments to include/capstone/<arch>.h for complete insn list.)"
 ./mapping_insn_name-arch.py $1/${ARCH}GenAsmMatcher.inc > ${ARCH}MappingInsnName.inc
 #./mapping_insn_name-arch.py tablegen/ARMGenAsmMatcher.inc
 
