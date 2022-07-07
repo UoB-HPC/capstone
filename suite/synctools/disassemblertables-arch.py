@@ -37,14 +37,6 @@ static InsnType fname(InsnType insn, unsigned startBit, unsigned numBits) \\
     fieldMask = (((InsnType)1 << numBits) - 1) << startBit; \\
   return (insn & fieldMask) >> startBit; \\
 }
-
-// Helper function for inserting bits extracted from an encoded instruction into
-// a field.
-#define insertBits(fname, InsnType) \\
-static void fname(InsnType *field, InsnType bits, unsigned startBit, unsigned numBits) \\
-{ \\
-    field |= (InsnType)bits << startBit; \\
-} \\
 """)
 
 
@@ -130,6 +122,10 @@ for line in lines:
         line2 = line2.replace('fieldFromInstruction', 'fieldname')
         if 'InsnType FieldValue' in line2:
             line2 = line2.replace('InsnType ', '')
+        if 'insertBits(tmp,' in line2:
+            line2 = line2.replace('insertBits(', '')
+            tmpLn = line2.split(',')
+            line2 = tmpLn[0] + ' |=' + tmpLn[1] + ',' + tmpLn[2] + ',' + tmpLn[3] + ' <<' + tmpLn[4] + ';'
 
     elif 'DecodeComplete = true;' in line2:
         # dead code
