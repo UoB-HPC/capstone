@@ -2306,14 +2306,21 @@ static void printMatrixTileVector(MCInst *MI, unsigned OpNum, SStream *O, bool I
 	unsigned Reg = MCOperand_getReg(RegOp);
 	const char *RegName = getRegisterName(Reg, AArch64_NoRegAltName);
 
-  	// Insert the horizontal/vertical flag before the suffix.
-  	// StringRef Base, Suffix;
-	const char *Base;
-	const char *Suffix;
-  	std::tie(Base, Suffix) = RegName.split('.');
-	SStream_concat0(O, Base);
-	SStream_concat0(O, (IsVertical ? "v." : "h."));
-	SStream_concat0(O, Suffix);
+	const size_t strLn = strlen(RegName);
+	char RegNameNew[strLn + 2];
+	int index = 0;
+	for(int i = 0; i < (strLn + 2); i++){
+		if(RegName[i] != '.'){
+			RegNameNew[index] = RegName[i];
+			index++;
+		}
+		else{
+			RegNameNew[index] = IsVertical ? 'v' : 'h';
+			RegNameNew[index + 1] = '.';
+			index += 2;
+		}
+	}
+	SStream_concat0(O, RegNameNew);
 
 	if (MI->csh->detail) {
 #ifndef CAPSTONE_DIET
