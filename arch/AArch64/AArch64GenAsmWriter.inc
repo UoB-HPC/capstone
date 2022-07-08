@@ -25543,33 +25543,96 @@ static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI)
     /* 15620 */ "zero	{za1.s,za2.s,za3.s}\0"
   ;
 
-#ifndef NDEBUG
-  static struct SortCheck {
-    SortCheck(ArrayRef<PatternsForOpcode> OpToPatterns) {
-                 OpToPatterns.begin(), OpToPatterns.end(),
-                 [](const PatternsForOpcode &L, const PatternsForOpcode &R) {
-                   return L.Opcode < R.Opcode;
-                 }) &&
-             "tablegen failed to sort opcode patterns");
+
+  char *AsmString;
+  const size_t OpToSize = sizeof(OpToPatterns) / sizeof(PatternsForOpcode);
+
+  const unsigned opcode = MCInst_getOpcode(MI);
+
+  // Check for alias
+  int OpToIndex;
+  for(OpToIndex = 0; OpToIndex < OpToSize; OpToIndex++){
+    if(OpToPatterns[OpToIndex].Opcode == opcode)
+      break;
+  }
+  // Chech for match
+  if(opcode != OpToPatterns[OpToIndex].Opcode)
+    return NULL;
+
+  const PatternsForOpcode opToPat = OpToPatterns[OpToIndex];
+
+  // Try all patterns for this opcode
+  uint32_t AsmStrOffset = ~0U;
+  int patIdx = opToPat.PatternStart;
+  while(patIdx < (opToPat.PatternStart + opToPat.NumPatterns)){
+    // Check operand count first
+    if(MCInst_getNumOperands(MI) != Patterns[patIdx].NumOperands)
+      return NULL;
+    
+    // Test all conditions for this pattern
+    int condIdx = Patterns[patIdx].AliasCondStart;
+    int opIdx = 0;
+    bool allPass = true;
+    while(condIdx < (Patterns[patIdx].AliasCondStart + Patterns[patIdx].NumConds)){
+      MCOperand *opnd = MCInst_getOperand(MI, opIdx);
+      opIdx++;
+      // Not concerned with any Feature related conditions as STI is disregarded
+      switch (Conds[condIdx].Kind)
+      {
+      case AliasPatternCond_K_Ignore :
+        // Operand can be anything.
+        break;
+      case AliasPatternCond_K_Reg :
+        // Operand must be a specific register.
+        allPass = (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == Conds[condIdx].Value);
+        break;
+      case AliasPatternCond_K_TiedReg :
+        // Operand must match the register of another operand.
+        allPass = (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == 
+                  MCOperand_getReg(MCInst_getOperand(MI, Conds[condIdx].Value)));
+        break;
+      case AliasPatternCond_K_Imm :
+        // Operand must be a specific immediate.
+        allPass = (MCOperand_isImm(opnd) && MCOperand_getImm(opnd) == Conds[condIdx].Value);
+        break;
+      case AliasPatternCond_K_RegClass :
+        // Operand must be a register in this class. Value is a register class id.
+        allPass = (MCOperand_isReg(opnd) && GETREGCLASS_CONTAIN(Conds[condIdx].Value, (opIdx-1)));
+        break;
+      case AliasPatternCond_K_Custom :
+        // Operand must match some custom criteria.
+        allPass = MCOperand_isValid(opnd);
+        break;
+      case AliasPatternCond_K_Feature :
+      case AliasPatternCond_K_NegFeature :
+      case AliasPatternCond_K_OrFeature :
+      case AliasPatternCond_K_OrNegFeature :
+      case AliasPatternCond_K_EndOrFeatures :
+      default :
+        break;
+      }
+      // If one fails, exit
+      if(!allPass) break;
+      condIdx++;
     }
-  } sortCheckVar(OpToPatterns);
-#endif
+    if(allPass){
+      AsmStrOffset = Patterns[patIdx].AsmStrOffset;
+      break;
+    }
+    patIdx++;
+  }
 
-  AliasMatchingData M {
-    makeArrayRef(OpToPatterns),
-    makeArrayRef(Patterns),
-    makeArrayRef(Conds),
-    StringRef(AsmStrings, array_lengthof(AsmStrings)),
-    &AArch64InstPrinterValidateMCOperand,
-  };
-  const char *AsmString = matchAliasPatterns(MI, &STI, M);
-  if (!AsmString) return false;
+  // If no alias matched, don't print an alias.
+  if (AsmStrOffset == ~0U)
+    return NULL;
 
+  AsmString = malloc(sizeof(char) * (strlen(AsmStrings) - AsmStrOffset));
+  strcpy(AsmString, &AsmStrings[AsmStrOffset]);
 
   tmpString = cs_strdup(AsmString);
 
   while (AsmString[I] != ' ' && AsmString[I] != '\t' &&
-         AsmString[I] != '$' && AsmString[I] != '\0')
+        AsmString[I] != '$' && AsmString[I] != '\0')
     ++I;
 
   tmpString[I] = 0;
@@ -25588,11 +25651,11 @@ static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI)
           ++I;
           OpIdx = AsmString[I++] - 1;
           PrintMethodIdx = AsmString[I++] - 1;
-          printCustomAliasOperand(MI, OpIdx, PrintMethodIdx, OS);
+          printCustomAliasOperand(MI, 0, OpIdx, PrintMethodIdx, OS);
         } else
-            printOperand(MI, (unsigned)(AsmString[I++]) - 1, OS);
+          printOperand(MI, unsigned(AsmString[I++]) - 1, OS);
       } else {
-          SStream_concat1(OS, AsmString[I++]);
+        SStream_concat1(OS, AsmString[I++]);
       }
     } while (AsmString[I] != '\0');
   }
