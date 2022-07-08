@@ -646,6 +646,9 @@ for line in lines:
     elif 'switch (PredicateIndex) {' in line:
         print_line('  int64_t Val;')
         print_line(line)
+    elif 'uint32_t(' in line and in_printAliasInstr:
+        line = line.replace('uint32_t(', '')
+        line = line.replace(')', '')
     elif 'unsigned I = 0;' in line and in_printAliasInstr:
         print_line("""
   tmpString = cs_strdup(AsmString);
