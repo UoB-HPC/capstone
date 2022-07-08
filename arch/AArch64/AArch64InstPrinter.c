@@ -1087,6 +1087,28 @@ static void printImmHex(MCInst *MI, unsigned OpNum, SStream *O)
 	}
 }
 
+static void printSImm(const MCInst *MI, unsigned OpNo, SStream *O, int Size) {
+  const MCOperand *Op = MCInst_getOperand(MI, OpNo);
+  if (Size == 8)
+	printInt64Bang(O, (signed char) MCOperand_getImm(Op));
+  else if (Size == 16)
+	printInt64Bang(O, (signed short) MCOperand_getImm(Op));
+  else
+    printInt64Bang(O, MCOperand_getImm(Op));
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = MCOperand_getImm(Op);
+		MI->flat_insn->detail->arm64.op_count++;
+	}
+}
+
 static void printPostIncOperand(MCInst *MI, unsigned OpNum, SStream *O,
 		unsigned Imm)
 {
