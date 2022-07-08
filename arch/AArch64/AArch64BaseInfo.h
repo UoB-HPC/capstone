@@ -676,6 +676,14 @@ typedef struct SysAliasSysReg {
 
 #define SysReg SysAliasSysReg
 
+typedef struct SysAliasImm {
+  const char *Name;
+  uint16_t Encoding;
+  uint16_t ImmValue;
+} SysAliasImm;
+
+#define DBnXS SysAliasImm
+
 typedef struct ExactFPImm {
   const char *Name;
   int Enum;
