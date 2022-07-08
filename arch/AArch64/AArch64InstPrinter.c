@@ -1087,8 +1087,8 @@ static void printImmHex(MCInst *MI, unsigned OpNum, SStream *O)
 	}
 }
 
-static void printSImm(const MCInst *MI, unsigned OpNo, SStream *O, int Size) {
-  const MCOperand *Op = MCInst_getOperand(MI, OpNo);
+static void printSImm(MCInst *MI, unsigned OpNo, SStream *O, int Size) {
+  MCOperand *Op = MCInst_getOperand(MI, OpNo);
   if (Size == 8)
 	printInt64Bang(O, (signed char) MCOperand_getImm(Op));
   else if (Size == 16)
@@ -2025,7 +2025,7 @@ static void printBarrierOption(MCInst *MI, unsigned OpNum, SStream *O)
 	}
 }
 
-void printBarriernXSOption(const MCInst *MI, unsigned OpNo, SStream *O) {
+void printBarriernXSOption(MCInst *MI, unsigned OpNo, SStream *O) {
 	unsigned Val = MCOperand_getImm(MCInst_getOperand(MI, OpNo));
 	// assert(MI->getOpcode() == AArch64::DSBnXS);
 
@@ -2606,7 +2606,7 @@ static void printGPR64as32(MCInst *MI, unsigned OpNum, SStream *O)
 	SStream_concat0(O, getRegisterName(getWRegFromXReg(Reg), AArch64_NoRegAltName));
 }
 
-static void printGPR64x8(const MCInst *MI, unsigned OpNum, SStream *O) 
+static void printGPR64x8(MCInst *MI, unsigned OpNum, SStream *O) 
 {
   	unsigned int Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum));
 
