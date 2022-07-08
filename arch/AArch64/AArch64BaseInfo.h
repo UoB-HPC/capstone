@@ -705,6 +705,7 @@ const PState *lookupPStateByEncoding(uint16_t Encoding);
 const SVEPREDPAT *lookupSVEPREDPATByEncoding(uint16_t Encoding);
 const ExactFPImm *lookupExactFPImmByEnum(uint16_t Encoding);
 const SVCR *lookupSVCRByEncoding(uint8_t Encoding);
+const DBnXS *lookupDBnXSByEncoding(uint8_t Encoding);
 
 // NOTE: result must be 128 bytes to contain the result
 void AArch64SysReg_genericRegisterString(uint32_t Bits, char *result);
