@@ -138,6 +138,21 @@ for line in lines:
             print_line("static void printInstruction(MCInst *MI, SStream *O)\n{")
         else:
             print_line("static void printInstruction(MCInst *MI, SStream *O)\n{")
+    elif 'LLVM_NO_PROFILE_INSTRUMENT_FUNCTION' in line:
+        continue
+    elif 'AArch64InstPrinter::getMnemonic' in line:
+        print_line("static uint64_t getMnemonic(MCInst *MI, SStream *O, unsigned int opcode) {")
+    elif 'return {AsmStrs+(Bits' in line:
+        tmp = line.split(',')
+        prntStr = tmp[0].split('{')[1]
+        print_line("\tSStream_concat0(O, " + prntStr + ");")
+        print_line("\treturn Bits;")
+    elif 'MnemonicInfo = getMnemonic(' in line:
+        continue
+    elif 'O << MnemonicInfo' in line:
+        continue
+    elif 'uint64_t Bits = MnemonicInfo' in line:
+        print_line("\tuint64_t Bits = getMnemonic(MI, O, opcode);")
     elif 'const char *AArch64InstPrinter::' in line:
         continue
     elif 'getRegisterName(' in line:
