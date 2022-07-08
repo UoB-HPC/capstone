@@ -14827,7 +14827,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 16:
     // ADRP
-    printAdrpLabel(MI, Address, 1, O);
+    printAdrpLabel(MI, 1, O);
     return;
     break;
   case 17:
