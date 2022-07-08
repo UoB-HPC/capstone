@@ -14545,7 +14545,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 30:
     // INDEX_II_H, INDEX_IR_H
-    printSImm<16>(MI, 1, O);
+    printSImm(MI, 1, O, 16);
     SStream_concat0(O, ", ");
     break;
   case 31:
@@ -14927,12 +14927,12 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 36:
     // INDEX_II_B, INDEX_IR_B
-    printSImm<8>(MI, 1, O);
+    printSImm(MI, 1, O, 8);
     SStream_concat0(O, ", ");
     break;
   case 37:
     // INDEX_II_H
-    printSImm<16>(MI, 2, O);
+    printSImm(MI, 2, O, 16);
     return;
     break;
   case 38:
@@ -15482,12 +15482,12 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 61:
     // INDEX_II_B
-    printSImm<8>(MI, 2, O);
+    printSImm(MI, 2, O, 8);
     return;
     break;
   case 62:
     // INDEX_RI_H
-    printSImm<16>(MI, 2, O);
+    printSImm(MI, 2, O, 16);
     return;
     break;
   case 63:
@@ -16234,7 +16234,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 70:
     // INDEX_RI_B
-    printSImm<8>(MI, 2, O);
+    printSImm(MI, 2, O, 8);
     return;
     break;
   case 71:

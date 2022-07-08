@@ -237,7 +237,7 @@ for line in lines:
                 line2 = line2.replace('printLogicalImm', 'printLogicalImm32')
             elif '64' in param:
                 line2 = line2.replace('printLogicalImm', 'printLogicalImm64')
-        elif 'printSVERegOp' in line2 or 'printGPRSeqPairsClassOperand' in line2 or 'printTypedVectorList' in line2 or 'printPostIncOperand' in line2 or 'printImmScale' in line2 or 'printRegWithShiftExtend' in line2 or 'printUImm12Offset' in line2 or 'printExactFPImm' in line2 or 'printMemExtend' in line2 or 'printZPRasFPR' in line2 or 'printMatrixTileVector' in line2 or 'printMatrix<' in line2:
+        elif 'printSVERegOp' in line2 or 'printGPRSeqPairsClassOperand' in line2 or 'printTypedVectorList' in line2 or 'printPostIncOperand' in line2 or 'printImmScale' in line2 or 'printRegWithShiftExtend' in line2 or 'printUImm12Offset' in line2 or 'printExactFPImm' in line2 or 'printMemExtend' in line2 or 'printZPRasFPR' in line2 or 'printMatrixTileVector' in line2 or 'printMatrix<' in line2 or 'printSImm' in line2:
             param = extract_brackets(line2)
             if param == '':
                 param = '0'
