@@ -249,6 +249,8 @@ for line in lines:
             bracket_content = line2[line2.index('<') + 1 : line2.index('>')]
             line2 = line2.replace('<' + bracket_content + '>', '')
             line2 = line2.replace(' O);', ' O, %s);' %bracket_content)
+        elif 'printAlignedLabel' in line2:
+            line2 = line2.replace('Address, ', '')
 
         print_line(line2)
     elif "static const char AsmStrs[]" in line:

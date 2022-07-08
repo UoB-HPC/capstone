@@ -13929,14 +13929,14 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 14:
     // B, BL
-    printAlignedLabel(MI, Address, 0, O);
+    printAlignedLabel(MI, 0, O);
     return;
     break;
   case 15:
     // BCcc, Bcc
     printCondCode(MI, 0, O);
     SStream_concat0(O, "\t");
-    printAlignedLabel(MI, Address, 1, O);
+    printAlignedLabel(MI, 1, O);
     return;
     break;
   case 16:
@@ -14847,7 +14847,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 20:
     // CBNZW, CBNZX, CBZW, CBZX, LDRDl, LDRQl, LDRSWl, LDRSl, LDRWl, LDRXl, P...
-    printAlignedLabel(MI, Address, 1, O);
+    printAlignedLabel(MI, 1, O);
     return;
     break;
   case 21:
@@ -16375,7 +16375,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     break;
   case 92:
     // TBNZW, TBNZX, TBZW, TBZX
-    printAlignedLabel(MI, Address, 2, O);
+    printAlignedLabel(MI, 2, O);
     return;
     break;
   case 93:
