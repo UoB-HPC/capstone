@@ -2610,7 +2610,7 @@ static void printGPR64x8(MCInst *MI, unsigned OpNum, SStream *O)
 {
   	unsigned int Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum));
 
-  	SStream_concat0(O, getRegisterName(MCRegisterInfo_getSubReg(MI->MRI, Reg, AArch64_x8sub_0)));
+  	SStream_concat0(O, getRegisterName(MCRegisterInfo_getSubReg(MI->MRI, Reg, AArch64_x8sub_0), AArch64_NoRegAltName));
 }
 
 #define PRINT_ALIAS_INSTR
