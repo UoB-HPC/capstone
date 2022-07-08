@@ -710,6 +710,50 @@ const DBnXS *lookupDBnXSByEncoding(uint8_t Encoding);
 // NOTE: result must be 128 bytes to contain the result
 void AArch64SysReg_genericRegisterString(uint32_t Bits, char *result);
 
+// ---------------------------------------------------------------------------
+// The following Structs and Enum are taken from MCInstPrinter.h in llvm.
+// These are required for the updated printAliasInstr() function in
+// $ARCHGenAsmWriter.inc
+
+/// Map from opcode to pattern list by binary search.
+typedef struct PatternsForOpcode {
+  uint32_t Opcode;
+  uint16_t PatternStart;
+  uint16_t NumPatterns;
+} PatternsForOpcode;
+
+/// Data for each alias pattern. Includes feature bits, string, number of
+/// operands, and a variadic list of conditions to check.
+typedef struct AliasPattern {
+  uint32_t AsmStrOffset;
+  uint32_t AliasCondStart;
+  uint8_t NumOperands;
+  uint8_t NumConds;
+} AliasPattern;
+
+enum CondKind {
+  AliasPatternCond_K_Feature,	    // Match only if a feature is enabled.
+  AliasPatternCond_K_NegFeature,    // Match only if a feature is disabled.
+  AliasPatternCond_K_OrFeature,	    // Match only if one of a set of features is
+				    // enabled.
+  AliasPatternCond_K_OrNegFeature,  // Match only if one of a set of features is
+				    // disabled.
+  AliasPatternCond_K_EndOrFeatures, // Note end of list of K_Or(Neg)?Features.
+  AliasPatternCond_K_Ignore,	    // Match any operand.
+  AliasPatternCond_K_Reg,	    // Match a specific register.
+  AliasPatternCond_K_TiedReg,	    // Match another already matched register.
+  AliasPatternCond_K_Imm,	    // Match a specific immediate.
+  AliasPatternCond_K_RegClass,	    // Match registers in a class.
+  AliasPatternCond_K_Custom,	    // Call custom matcher by index.
+};
+
+typedef struct AliasPatternCond {
+  int Kind;
+  uint32_t Value;
+} AliasPatternCond;
+
+// ---------------------------------------------------------------------------
+
 #include "AArch64GenSystemOperands_enum.inc"
 
 #endif
