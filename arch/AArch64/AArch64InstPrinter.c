@@ -2584,6 +2584,13 @@ static void printGPR64as32(MCInst *MI, unsigned OpNum, SStream *O)
 	SStream_concat0(O, getRegisterName(getWRegFromXReg(Reg), AArch64_NoRegAltName));
 }
 
+static void printGPR64x8(const MCInst *MI, unsigned OpNum, SStream *O) 
+{
+  	unsigned int Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum));
+
+  	SStream_concat0(O, getRegisterName(MRI.getSubReg(Reg, AArch64_x8sub_0)));
+}
+
 #define PRINT_ALIAS_INSTR
 #include "AArch64GenAsmWriter.inc"
 #include "AArch64GenRegisterName.inc"
