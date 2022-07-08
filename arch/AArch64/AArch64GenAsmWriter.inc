@@ -25653,7 +25653,7 @@ static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI)
           PrintMethodIdx = AsmString[I++] - 1;
           printCustomAliasOperand(MI, 0, OpIdx, PrintMethodIdx, OS);
         } else
-          printOperand(MI, unsigned(AsmString[I++]) - 1, OS);
+          printOperand(MI, (unsigned)(AsmString[I++]) - 1, OS);
       } else {
         SStream_concat1(OS, AsmString[I++]);
       }

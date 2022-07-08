@@ -47,7 +47,7 @@ static bool printSysAlias(MCInst *MI, SStream *O);
 static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI);
 static void printInstruction(MCInst *MI, SStream *O);
 static void printShifter(MCInst *MI, unsigned OpNum, SStream *O);
-static void printCustomAliasOperand(MCInst *MI, unsigned OpIdx,
+static void printCustomAliasOperand(MCInst *MI, uint64_t Address, unsigned OpIdx,
 		unsigned PrintMethodIdx, SStream *OS);
 
 
