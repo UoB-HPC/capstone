@@ -2003,6 +2003,48 @@ static void printBarrierOption(MCInst *MI, unsigned OpNum, SStream *O)
 	}
 }
 
+void printBarriernXSOption(const MCInst *MI, unsigned OpNo, SStream *O) {
+	unsigned Val = MCOperand_getImm(MCInst_getOperand(MI, OpNo));
+	// assert(MI->getOpcode() == AArch64::DSBnXS);
+
+	const char *Name = NULL;
+	const DBnXS *DB = lookupDBnXSByEncoding(Val);
+	Name = DB ? DB->Name : NULL;
+
+	if (Name) {
+		SStream_concat0(O, Name);
+
+		if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_BARRIER;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].barrier = Val;
+			MI->flat_insn->detail->arm64.op_count++;
+		}
+	}
+	else {
+		printUInt32Bang(O, Val);
+
+		if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = Val;
+			MI->flat_insn->detail->arm64.op_count++;
+		}
+	}
+}
+
 static void printMRSSystemRegister(MCInst *MI, unsigned OpNum, SStream *O)
 {
 	unsigned Val = (unsigned)MCOperand_getImm(MCInst_getOperand(MI, OpNum));
