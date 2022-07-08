@@ -2793,6 +2793,30 @@ const SVCR *lookupSVCRByEncoding(uint8_t Encoding)
     return &SVCRsList[Index[i].index];
 }
 
+static const DBnXS DBnXSsList[] = {
+  { "ishnxs",  0xB,  0x18}, // 0
+  { "nshnxs",  0x7,  0x14}, // 1
+  { "oshnxs",  0x3,  0x10}, // 2
+  { "synxs",  0xF,  0x1C}, // 3
+};
+
+const DBnXS *lookupDBnXSByEncoding(uint8_t Encoding)
+{
+  unsigned int i;
+  static const struct IndexType Index[] = {
+    { 0x3, 2 },
+    { 0x7, 1 },
+    { 0xB, 0 },
+    { 0xF, 3 },
+  };
+
+  i = binsearch_IndexTypeEncoding(Index, ARR_SIZE(Index), Encoding);
+  if (i == -1)
+    return NULL;
+  else
+    return &DBnXSsList[Index[i].index];
+}
+
 static const ExactFPImm ExactFPImmsList[] = {
   { "half", 0x1, "0.5" }, // 0
   { "one", 0x2, "1.0" }, // 1
