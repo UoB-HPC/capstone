@@ -27232,7 +27232,7 @@ static DecodeStatus fname(const uint8_t DecodeTable[], MCInst *MI, \
       Len = *++Ptr; \
       FieldValue = fieldname(insn, Start, Len); \
       /* Decode the field value. */ \
-      InsnType ExpectedValue = decodeULEB128(++Ptr, &Len); \
+      ExpectedValue = decodeULEB128(++Ptr, &Len); \
       Ptr += Len; \
       /* NumToSkip is a plain 24-bit integer. */ \
       NumToSkip = *Ptr++; \

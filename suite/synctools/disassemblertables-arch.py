@@ -188,8 +188,8 @@ for line in lines:
         line2 = line2.replace('InsnType ', '')
     elif 'InsnType NegativeMask =' in line2:
         line2 = line2.replace('InsnType ', '')
-    elif 'uint32_t ExpectedValue' in line2:
-        line2 = line2.replace('uint32_t ', '')
+    elif 'InsnType ExpectedValue' in line2:
+        line2 = line2.replace('InsnType ', '')
     elif 'ptrdiff_t Loc = ' in line2:
         continue
     elif 'LLVM_DEBUG(' in line2:
