@@ -263,6 +263,7 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
 	// Init new MCOperand to be used in switch below.
 	// Kind RegVal set inside a case when needed.
 	MCOperand *Op;
+	Op = malloc(sizeof(MCOperand));
 	switch (MCInst_getOpcode(MI)) {
     	default:
     	  break;
@@ -277,7 +278,7 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
     	  // Spill and fill instructions have a single immediate used for both the
     	  // vector select offset and optional memory offset. Replicate the decoded
     	  // immediate.
-    	  const MCOperand *Imm4Op = MCInst_getOperand(MI, 2);
+    	  MCOperand *Imm4Op = MCInst_getOperand(MI, 2);
     	//   assert(MCOperand_isImm(Imm4Op) && "Unexpected operand type!");
     	  MCInst_addOperand2(MI, Imm4Op);
     	  break;
