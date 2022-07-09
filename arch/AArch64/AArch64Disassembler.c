@@ -269,8 +269,8 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
     	// For Scalable Matrix Extension (SME) instructions that have an implicit
     	// operand for the accumulator (ZA) which isn't encoded, manually insert
     	// operand.
-    	case AArch64::LDR_ZA:
-    	case AArch64::STR_ZA: {
+    	case AArch64_LDR_ZA:
+    	case AArch64_STR_ZA: {
 		  Op->Kind = kRegister;
 		  Op->RegVal = AArch64_ZA;
 		  MCInst_insert0(MI, 0, Op)
@@ -282,12 +282,12 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
     	  MCInst_addOperand2(MI, Imm4Op);
     	  break;
     	}
-    	case AArch64::LD1_MXIPXX_H_B:
-    	case AArch64::LD1_MXIPXX_V_B:
-    	case AArch64::ST1_MXIPXX_H_B:
-    	case AArch64::ST1_MXIPXX_V_B:
-    	case AArch64::INSERT_MXIPZ_H_B:
-    	case AArch64::INSERT_MXIPZ_V_B:
+    	case AArch64_LD1_MXIPXX_H_B:
+    	case AArch64_LD1_MXIPXX_V_B:
+    	case AArch64_ST1_MXIPXX_H_B:
+    	case AArch64_ST1_MXIPXX_V_B:
+    	case AArch64_INSERT_MXIPZ_H_B:
+    	case AArch64_INSERT_MXIPZ_V_B:
     	  // e.g.
     	  // MOVA ZA0<HV>.B[<Ws>, <imm>], <Pg>/M, <Zn>.B
     	  //      ^ insert implicit 8-bit element tile
@@ -295,45 +295,45 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
 		  Op->RegVal = AArch64_ZAB0;
 		  MCInst_insert0(MI, 0, Op);
     	  break;
-    	case AArch64::EXTRACT_ZPMXI_H_B:
-    	case AArch64::EXTRACT_ZPMXI_V_B:
+    	case AArch64_EXTRACT_ZPMXI_H_B:
+    	case AArch64_EXTRACT_ZPMXI_V_B:
     	  // MOVA <Zd>.B, <Pg>/M, ZA0<HV>.B[<Ws>, <imm>]
     	  //                      ^ insert implicit 8-bit element tile
 		  Op->Kind = kRegister;
 		  Op->RegVal = AArch64_ZAB0;
 		  MCInst_insert0(MI, 2, Op);
     	  break;
-    	case AArch64::LD1_MXIPXX_H_Q:
-    	case AArch64::LD1_MXIPXX_V_Q:
-    	case AArch64::ST1_MXIPXX_H_Q:
-    	case AArch64::ST1_MXIPXX_V_Q:
+    	case AArch64_LD1_MXIPXX_H_Q:
+    	case AArch64_LD1_MXIPXX_V_Q:
+    	case AArch64_ST1_MXIPXX_H_Q:
+    	case AArch64_ST1_MXIPXX_V_Q:
     	  // 128-bit load/store have implicit zero vector index.
 		  Op->Kind = kImmediate;
 		  Op->ImmVal = 0;
 		  MCInst_insert0(MI, 2, Op);
     	  break;
     	// 128-bit mova have implicit zero vector index.
-    	case AArch64::INSERT_MXIPZ_H_Q:
-    	case AArch64::INSERT_MXIPZ_V_Q:
+    	case AArch64_INSERT_MXIPZ_H_Q:
+    	case AArch64_INSERT_MXIPZ_V_Q:
 		  Op->Kind = kImmediate;
 		  Op->ImmVal = 0;
 		  MCInst_insert0(MI, 2, Op);
     	  break;
-    	case AArch64::EXTRACT_ZPMXI_H_Q:
-    	case AArch64::EXTRACT_ZPMXI_V_Q:
+    	case AArch64_EXTRACT_ZPMXI_H_Q:
+    	case AArch64_EXTRACT_ZPMXI_V_Q:
 		  Op->Kind = kImmediate;
 		  Op->ImmVal = 0;
 		  MCInst_addOperand2(MI, Op);
     	  break;
-    	case AArch64::SMOVvi8to32_idx0:
-    	case AArch64::SMOVvi8to64_idx0:
-    	case AArch64::SMOVvi16to32_idx0:
-    	case AArch64::SMOVvi16to64_idx0:
-    	case AArch64::SMOVvi32to64_idx0:
-    	case AArch64::UMOVvi8_idx0:
-    	case AArch64::UMOVvi16_idx0:
-    	case AArch64::UMOVvi32_idx0:
-    	case AArch64::UMOVvi64_idx0:
+    	case AArch64_SMOVvi8to32_idx0:
+    	case AArch64_SMOVvi8to64_idx0:
+    	case AArch64_SMOVvi16to32_idx0:
+    	case AArch64_SMOVvi16to64_idx0:
+    	case AArch64_SMOVvi32to64_idx0:
+    	case AArch64_UMOVvi8_idx0:
+    	case AArch64_UMOVvi16_idx0:
+    	case AArch64_UMOVvi32_idx0:
+    	case AArch64_UMOVvi64_idx0:
 		  Op->Kind = kImmediate;
 		  Op->ImmVal = 0;
 		  MCInst_addOperand2(MI, Op);
