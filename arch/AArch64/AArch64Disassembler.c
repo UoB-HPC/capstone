@@ -273,12 +273,12 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
     	case AArch64_STR_ZA: {
 		  Op->Kind = kRegister;
 		  Op->RegVal = AArch64_ZA;
-		  MCInst_insert0(MI, 0, Op)
+		  MCInst_insert0(MI, 0, Op);
     	  // Spill and fill instructions have a single immediate used for both the
     	  // vector select offset and optional memory offset. Replicate the decoded
     	  // immediate.
-    	  const MCOperand &Imm4Op = MCInst_getOperand(MI, 2);
-    	  assert(MCOperand_isImm(Imm4Op) && "Unexpected operand type!");
+    	  const MCOperand *Imm4Op = MCInst_getOperand(MI, 2);
+    	//   assert(MCOperand_isImm(Imm4Op) && "Unexpected operand type!");
     	  MCInst_addOperand2(MI, Imm4Op);
     	  break;
     	}
@@ -532,7 +532,7 @@ static DecodeStatus DecodeGPR64RegisterClass(MCInst *Inst, unsigned RegNo,
 }
 
 static const unsigned GPR64x8DecoderTable[] = {
-	Arch64_X0_X1_X2_X3_X4_X5_X6_X7, AArch64_X2_X3_X4_X5_X6_X7_X8_X9, 
+	AArch64_X0_X1_X2_X3_X4_X5_X6_X7, AArch64_X2_X3_X4_X5_X6_X7_X8_X9, 
 	AArch64_X4_X5_X6_X7_X8_X9_X10_X11, AArch64_X6_X7_X8_X9_X10_X11_X12_X13, 
 	AArch64_X8_X9_X10_X11_X12_X13_X14_X15, AArch64_X10_X11_X12_X13_X14_X15_X16_X17, 
 	AArch64_X12_X13_X14_X15_X16_X17_X18_X19, AArch64_X14_X15_X16_X17_X18_X19_X20_X21, 
@@ -764,17 +764,16 @@ static DecodeStatus DecodeMatrixTileListRegisterClass(MCInst *Inst,
 	return Success;
 }
 
-static const std::vector<std::vector<unsigned>>
-    MatrixZATileDecoderTable = {
-        {AArch64_ZAB0},
-        {AArch64_ZAH0, AArch64_ZAH1},
-        {AArch64_ZAS0, AArch64_ZAS1, AArch64_ZAS2, AArch64_ZAS3},
-        {AArch64_ZAD0, AArch64_ZAD1, AArch64_ZAD2, AArch64_ZAD3,
-         AArch64_ZAD4, AArch64_ZAD5, AArch64_ZAD6, AArch64_ZAD7},
-        {AArch64_ZAQ0, AArch64_ZAQ1, AArch64_ZAQ2, AArch64_ZAQ3,
-         AArch64_ZAQ4, AArch64_ZAQ5, AArch64_ZAQ6, AArch64_ZAQ7,
-         AArch64_ZAQ8, AArch64_ZAQ9, AArch64_ZAQ10, AArch64_ZAQ11,
-         AArch64_ZAQ12, AArch64_ZAQ13, AArch64_ZAQ14, AArch64_ZAQ15}
+static const unsigned MatrixZATileDecoderTable[] = {
+	AArch64_ZAB0,
+    AArch64_ZAH0, AArch64_ZAH1,
+    AArch64_ZAS0, AArch64_ZAS1, AArch64_ZAS2, AArch64_ZAS3,
+    AArch64_ZAD0, AArch64_ZAD1, AArch64_ZAD2, AArch64_ZAD3,
+    AArch64_ZAD4, AArch64_ZAD5, AArch64_ZAD6, AArch64_ZAD7,
+    AArch64_ZAQ0, AArch64_ZAQ1, AArch64_ZAQ2, AArch64_ZAQ3,
+    AArch64_ZAQ4, AArch64_ZAQ5, AArch64_ZAQ6, AArch64_ZAQ7,
+    AArch64_ZAQ8, AArch64_ZAQ9, AArch64_ZAQ10, AArch64_ZAQ11,
+    AArch64_ZAQ12, AArch64_ZAQ13, AArch64_ZAQ14, AArch64_ZAQ15
 };
 
 static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo,
@@ -782,7 +781,31 @@ static DecodeStatus DecodeMatrixTile(MCInst *Inst, unsigned RegNo,
 	unsigned LastReg = (1 << NumBitsForTile) - 1;
 	if (RegNo > LastReg)
     	return Fail;
-	MCOperand_CreateReg0(Inst, MatrixZATileDecoderTable[NumBitsForTile][RegNo]);
+
+	// Convert original 2D indexes into 1D table index
+	unsigned index = 0;
+	switch (NumBitsForTile)
+	{
+	case 0:
+		// Only a single Byte tile at beginning of list so index = 0
+		break;
+	case 1:
+		index = 1 + RegNo;
+		break;
+	case 2:
+		index = 3 + RegNo;
+		break;
+	case 3:
+		index = 7 + RegNo;
+		break;
+	case 4:
+		index = 15 + RegNo;
+		break;
+	default:
+		break;
+	}
+
+	MCOperand_CreateReg0(Inst, MatrixZATileDecoderTable[index]);
 	return Success;
 }
 
