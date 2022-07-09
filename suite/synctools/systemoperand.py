@@ -570,7 +570,7 @@ for line in lines:
 
     if 'lookupPSBByEncoding' in line and '{' in line:
         count += 1
-        print_line('const PSB *AArch64PSBHint_lookupPSBByEncoding(uint16_t Encoding)\n{')
+        print_line('const PSB *lookupPSBByEncoding(uint16_t Encoding)\n{')
         print_line('  unsigned int i;')
         continue
 

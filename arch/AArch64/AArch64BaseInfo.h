@@ -698,7 +698,7 @@ const IC *lookupICByEncoding(uint16_t Encoding);
 const TLBI *lookupTLBIByEncoding(uint16_t Encoding);
 const SVEPRFM *lookupSVEPRFMByEncoding(uint16_t Encoding);
 const PRFM *lookupPRFMByEncoding(uint16_t Encoding);
-const PSB *AArch64PSBHint_lookupPSBByEncoding(uint16_t Encoding);
+const PSB *lookupPSBByEncoding(uint16_t Encoding);
 const ISB *lookupISBByEncoding(uint16_t Encoding);
 const TSB *lookupTSBByEncoding(uint16_t Encoding);
 const SysReg *lookupSysRegByEncoding(uint16_t Encoding);

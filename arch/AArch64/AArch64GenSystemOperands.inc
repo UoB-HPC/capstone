@@ -619,7 +619,7 @@ static const PSB PSBsList[] = {
   { "csync", 0x11 }, // 0
 };
 
-const PSB *AArch64PSBHint_lookupPSBByEncoding(uint16_t Encoding)
+const PSB *lookupPSBByEncoding(uint16_t Encoding)
 {
   unsigned int i;
   static const struct IndexType Index[] = {
