@@ -1660,11 +1660,21 @@ static void printPSBHintOp(MCInst *MI, unsigned OpNum, SStream *O)
 	MCOperand *Op = MCInst_getOperand(MI, OpNum);
 	unsigned int psbhintop = MCOperand_getImm(Op);
 
-	const PSB *PSB = AArch64PSBHint_lookupPSBByEncoding(psbhintop);
+	const PSB *PSB = lookupPSBByEncoding(psbhintop);
 	if (PSB)
 		SStream_concat0(O, PSB->Name);
 	else
 		printUInt32Bang(O, psbhintop);
+}
+
+static void printBTIHintOp(MCInst *MI, unsigned OpNum, SStream *O) {
+  unsigned btihintop = MCOperand_getImm(MCInst_getOperand(MI, OpNum)) ^ 32;
+
+  const BTI *BTI = lookupBTIByEncoding(btihintop);
+  if (BTI)
+	SStream_concat0(O, BTI->Name);
+  else
+	printUInt32Bang(O, btihintop);
 }
 
 static void printFPImmOperand(MCInst *MI, unsigned OpNum, SStream *O)
