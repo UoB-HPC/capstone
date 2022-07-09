@@ -49,6 +49,8 @@ static DecodeStatus DecodeFPR8RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeGPR64RegisterClass(MCInst *Inst, unsigned RegNo,
 		uint64_t Address, const void *Decoder);
+static DecodeStatus DecodeGPR64x8ClassRegisterClass(MCInst *Inst, unsigned RegNo, 
+		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeGPR64spRegisterClass(MCInst *Inst,
 		unsigned RegNo, uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeMatrixIndexGPR32_12_15RegisterClass(MCInst *Inst,
@@ -522,6 +524,29 @@ static DecodeStatus DecodeGPR64RegisterClass(MCInst *Inst, unsigned RegNo,
 		return Fail;
 
 	Register = GPR64DecoderTable[RegNo];
+	MCOperand_CreateReg0(Inst, Register);
+
+	return Success;
+}
+
+static const unsigned GPR64x8DecoderTable[] = {
+	Arch64_X0_X1_X2_X3_X4_X5_X6_X7, AArch64_X2_X3_X4_X5_X6_X7_X8_X9, 
+	AArch64_X4_X5_X6_X7_X8_X9_X10_X11, AArch64_X6_X7_X8_X9_X10_X11_X12_X13, 
+	AArch64_X8_X9_X10_X11_X12_X13_X14_X15, AArch64_X10_X11_X12_X13_X14_X15_X16_X17, 
+	AArch64_X12_X13_X14_X15_X16_X17_X18_X19, AArch64_X14_X15_X16_X17_X18_X19_X20_X21, 
+	AArch64_X16_X17_X18_X19_X20_X21_X22_X23, AArch64_X18_X19_X20_X21_X22_X23_X24_X25, 
+	AArch64_X20_X21_X22_X23_X24_X25_X26_X27, AArch64_X22_X23_X24_X25_X26_X27_X28_FP
+};
+
+static DecodeStatus DecodeGPR64x8ClassRegisterClass(MCInst *Inst, unsigned RegNo, 
+		uint64_t Address, const void *Decoder) 
+{	
+	if (RegNo > 22)
+		return Fail;
+	if (RegNo & 1)
+		return Fail;
+	
+	unsigned Register = GPR64x8DecoderTable[RegNo >> 1];
 	MCOperand_CreateReg0(Inst, Register);
 
 	return Success;
@@ -1927,7 +1952,8 @@ static DecodeStatus DecodeAdrInstruction(MCInst *Inst, uint32_t insn,
 }
 
 static DecodeStatus DecodeAddSubImmShift(MCInst *Inst, uint32_t insn,
-                                         uint64_t Addr, const void *Decoder) {
+		uint64_t Addr, const void *Decoder) 
+{
 	unsigned Rd = fieldFromInstruction_4(insn, 0, 5);
 	unsigned Rn = fieldFromInstruction_4(insn, 5, 5);
 	unsigned Imm = fieldFromInstruction_4(insn, 10, 14);
