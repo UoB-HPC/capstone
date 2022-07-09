@@ -25601,7 +25601,7 @@ static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI)
         break;
       case AliasPatternCond_K_Custom :
         // Operand must match some custom criteria.
-        allPass = MCOperand_isValid(opnd);
+        allPass = AArch64InstPrinterValidateMCOperand(opnd, Conds[condIdx].Value);
         break;
       case AliasPatternCond_K_Feature :
       case AliasPatternCond_K_NegFeature :
@@ -25918,7 +25918,7 @@ static bool AArch64InstPrinterValidateMCOperand(MCOperand *MCOp,
     // "bti" is an alias to "hint" only for certain values of CRm:Op2 fields.
     if (!MCOperand_isImm(MCOp))
       return false;
-    return AArch64BTIHint_lookupBTIByEncoding(MCOperand_getImm(MCOp) ^ 32) != NULL;
+    return lookupBTIByEncoding(MCOperand_getImm(MCOp) ^ 32) != NULL;
 
     }
   case 9: {
@@ -25927,7 +25927,7 @@ static bool AArch64InstPrinterValidateMCOperand(MCOperand *MCOp,
     // "psb" is an alias to "hint" only for certain values of CRm:Op2 fields.
     if (!MCOperand_isImm(MCOp))
       return false;
-    return AArch64PSBHint_lookupPSBByEncoding(MCOperand_getImm(MCOp)) != NULL;
+    return lookupPSBByEncoding(MCOperand_getImm(MCOp)) != NULL;
 
     }
   }

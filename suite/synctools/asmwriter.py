@@ -179,6 +179,14 @@ for line in lines:
             line2 = line.replace('STI.getFeatureBits()[', 'AArch64_getFeatureBits(')
         line2 = line2.replace(']', ')')
         print_line(line2)
+    elif 'lookupBTIByEncoding' in line:
+        line = line.replace('AArch64BTIHint::', '')
+        line = line.replace('MCOp.getImm()', 'MCOperand_getImm(MCOp)')
+        print_line(line)
+    elif 'lookupPSBByEncoding' in line:
+        line = line.replace('AArch64PSBHint::', '')
+        line = line.replace('MCOp.getImm()', 'MCOperand_getImm(MCOp)')
+        print_line(line)
     elif ', STI, ' in line:
         line2 = line.replace(', STI, ', ', ')
 
@@ -708,7 +716,7 @@ for line in lines:
         break;
       case AliasPatternCond_K_Custom :
         // Operand must match some custom criteria.
-        allPass = MCOperand_isValid(opnd);
+        allPass = AArch64InstPrinterValidateMCOperand(opnd, Conds[condIdx].Value);
         break;
       case AliasPatternCond_K_Feature :
       case AliasPatternCond_K_NegFeature :
