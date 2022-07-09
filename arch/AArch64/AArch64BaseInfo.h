@@ -657,6 +657,7 @@ typedef struct SysAlias {
 #define PState SysAlias
 #define SVEPREDPAT SysAlias
 #define SVCR SysAlias
+#define BTI SysAlias
 
 typedef struct SysAliasReg {
   const char *Name;
@@ -705,6 +706,7 @@ const PState *lookupPStateByEncoding(uint16_t Encoding);
 const SVEPREDPAT *lookupSVEPREDPATByEncoding(uint16_t Encoding);
 const ExactFPImm *lookupExactFPImmByEnum(uint16_t Encoding);
 const SVCR *lookupSVCRByEncoding(uint8_t Encoding);
+const BTI *lookupBTIByEncoding(uint8_t Encoding);
 const DBnXS *lookupDBnXSByEncoding(uint8_t Encoding);
 
 // NOTE: result must be 128 bytes to contain the result

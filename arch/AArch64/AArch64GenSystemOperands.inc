@@ -2793,6 +2793,28 @@ const SVCR *lookupSVCRByEncoding(uint8_t Encoding)
     return &SVCRsList[Index[i].index];
 }
 
+static const BTI BTIsList[] = {
+  { "c",  0x2 }, // 0
+  { "j",  0x4 }, // 1
+  { "jc",  0x6 }, // 2
+};
+
+const BTI *lookupBTIByEncoding(uint8_t Encoding)
+{
+  unsigned int i;
+  static const struct IndexType Index[] = {
+    { 0x2, 0 },
+    { 0x4, 1 },
+    { 0x6, 2 },
+  };
+
+  i = binsearch_IndexTypeEncoding(Index, ARR_SIZE(Index), Encoding);
+  if (i == -1)
+    return NULL;
+  else
+    return &BTIsList[Index[i].index];
+}
+
 static const DBnXS DBnXSsList[] = {
   { "ishnxs",  0xB,  0x18}, // 0
   { "nshnxs",  0x7,  0x14}, // 1

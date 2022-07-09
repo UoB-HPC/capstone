@@ -985,6 +985,70 @@ print_line("""
 }
 """)
 
+# extract BTIsList
+count = 0
+c = 0
+for line in lines:
+    line = line.rstrip()
+
+    if len(line.strip()) == 0:
+        continue
+
+    if line.strip() == 'constexpr BTI BTIsList[] = {':
+        count += 1
+        print_line('static const BTI BTIsList[] = {')
+        continue
+
+    line = line.strip()
+    if count == 1:
+        if line == '};':
+            # done with first enum
+            print_line('};\n')
+            break
+        else:
+            # skip pseudo instructions
+            line = line.replace('::', '_')
+            #line = line.replace('{}', '{ 0 }')
+            line = line.replace('{}', '')
+            tmp = line.split(',')
+            print_line("  %s, %s, // %u" %(tmp[0].lower(), tmp[1], c))
+            c += 1
+
+# lookupBTIByEncoding
+count = 0
+for line in lines:
+    line = line.rstrip()
+
+    if len(line.strip()) == 0:
+        continue
+
+    if 'lookupBTIByEncoding' in line and '{' in line:
+        count += 1
+        print_line('const BTI *lookupBTIByEncoding(uint8_t Encoding)\n{')
+        print_line('  unsigned int i;')
+        continue
+
+    if count == 1 and 'IndexType Index[] = {' in line:
+        count += 1
+
+    if count == 2:
+        if line.strip() == '};':
+            # done with array, or this function?
+            print_line(line)
+            break
+        else:
+            # enum items
+            print_line(line)
+
+print_line("""
+  i = binsearch_IndexTypeEncoding(Index, ARR_SIZE(Index), Encoding);
+  if (i == -1)
+    return NULL;
+  else
+    return &BTIsList[Index[i].index];
+}
+""")
+
 
 # extract DBnXSsList
 count = 0
