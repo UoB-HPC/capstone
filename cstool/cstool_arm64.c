@@ -74,6 +74,14 @@ void print_insn_detail_arm64(csh handle, cs_insn *ins)
 			case ARM64_OP_BARRIER:
 				printf("\t\toperands[%u].type: BARRIER = 0x%x\n", i, op->barrier);
 				break;
+			case ARM64_OP_SVCR:
+				if(op->svcr == ARM64_SVCR_SVCRSM)
+					printf("\t\toperands[%u].type: SVCR_BIT = SM\n", i);
+				if(op->svcr == ARM64_SVCR_SVCRZA)
+					printf("\t\toperands[%u].type: SVCR_BIT = ZA\n", i);
+				if(op->svcr == ARM64_SVCR_SVCRSMZA)
+					printf("\t\toperands[%u].type: SVCR_BIT = SM & ZA\n", i);
+				break;
 		}
 		
 		access = op->access;

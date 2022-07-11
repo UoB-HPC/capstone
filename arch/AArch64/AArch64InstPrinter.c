@@ -868,6 +868,25 @@ void AArch64_printInst(MCInst *MI, SStream *O, void *Info)
 					}
 				}
 				break;
+			// Hacky detail filling of SMSTART and SMSTOP alias'
+			case AArch64_MSRpstatesvcrImm1:{
+				if(MI->csh->detail){
+					MI->flat_insn->detail->arm64.op_count = 2;
+#ifndef CAPSTONE_DIET
+					for (int i = 0; i < 2; i++)
+					{
+						MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = 
+							get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+						MI->ac_idx++;
+					}
+#endif
+					MI->flat_insn->detail->arm64.operands[0].type = ARM64_OP_SVCR;
+					MI->flat_insn->detail->arm64.operands[0].svcr = lookupSVCRByEncoding(MCOperand_getImm(MCInst_getOperand(MI, 0)))->Encoding;
+					MI->flat_insn->detail->arm64.operands[1].type = ARM64_OP_IMM;
+					MI->flat_insn->detail->arm64.operands[1].imm = MCOperand_getImm(MCInst_getOperand(MI, 1));
+				}
+				break;
+			}
 		}
 	} else {
 		printInstruction(MI, O);
