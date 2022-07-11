@@ -657,6 +657,7 @@ for line in lines:
     elif 'uint32_t(' in line and in_printAliasInstr:
         line = line.replace('uint32_t(', '')
         line = line.replace(')', '')
+        print_line(line)
     elif '#ifndef NDEBUG' in line and in_printAliasInstr:
         print_line("""
   char *AsmString;
