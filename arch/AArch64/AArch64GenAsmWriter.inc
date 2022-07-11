@@ -25626,8 +25626,7 @@ static char *printAliasInstr(MCInst *MI, SStream *OS, MCRegisterInfo *MRI)
   if (AsmStrOffset == ~0U)
     return NULL;
 
-  AsmString = malloc(sizeof(char) * (strlen(AsmStrings) - AsmStrOffset));
-  strcpy(AsmString, &AsmStrings[AsmStrOffset]);
+  AsmString = cs_strdup(&AsmStrings[AsmStrOffset]);
 
   tmpString = cs_strdup(AsmString);
 
