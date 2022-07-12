@@ -127,8 +127,6 @@ static DecodeStatus DecodeAdrInstruction(MCInst *Inst, uint32_t insn,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeAddSubImmShift(MCInst *Inst, uint32_t insn,
         uint64_t Address, const void *Decoder);
-static DecodeStatus DecodeBaseAddSubImm(MCInst *Inst, uint32_t insn,
-		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeUnconditionalBranch(MCInst *Inst, uint32_t insn,
 		uint64_t Address, const void *Decoder);
 static DecodeStatus DecodeSystemPStateInstruction(MCInst *Inst,
@@ -2045,44 +2043,6 @@ static DecodeStatus DecodeAddSubImmShift(MCInst *Inst, uint32_t insn,
 	MCOperand_CreateImm0(Inst, ImmVal);
 	
 	MCOperand_CreateImm0(Inst, (12 * ShifterVal));
-	return Success;
-}
-
-static DecodeStatus DecodeBaseAddSubImm(MCInst *Inst, uint32_t insn,
-		uint64_t Addr, const void *Decoder)
-{
-	unsigned Rd = fieldFromInstruction_4(insn, 0, 5);
-	unsigned Rn = fieldFromInstruction_4(insn, 5, 5);
-	unsigned Imm = fieldFromInstruction_4(insn, 10, 14);
-	unsigned S = fieldFromInstruction_4(insn, 29, 1);
-	unsigned Datasize = fieldFromInstruction_4(insn, 31, 1);
-
-	unsigned ShifterVal = (Imm >> 12) & 3;
-	unsigned ImmVal = Imm & 0xFFF;
-
-	if (ShifterVal != 0 && ShifterVal != 1)
-		return Fail;
-
-	if (Datasize) {
-		if (Rd == 31 && !S)
-			DecodeGPR64spRegisterClass(Inst, Rd, Addr, Decoder);
-		else
-			DecodeGPR64RegisterClass(Inst, Rd, Addr, Decoder);
-
-		DecodeGPR64spRegisterClass(Inst, Rn, Addr, Decoder);
-	} else {
-		if (Rd == 31 && !S)
-			DecodeGPR32spRegisterClass(Inst, Rd, Addr, Decoder);
-		else
-			DecodeGPR32RegisterClass(Inst, Rd, Addr, Decoder);
-
-		DecodeGPR32spRegisterClass(Inst, Rn, Addr, Decoder);
-	}
-
-	//if (!Dis->tryAddingSymbolicOperand(Inst, Imm, Addr, Fail, 0, 4))
-	MCOperand_CreateImm0(Inst, ImmVal);
-	MCOperand_CreateImm0(Inst, 12 * ShifterVal);
-
 	return Success;
 }
 
