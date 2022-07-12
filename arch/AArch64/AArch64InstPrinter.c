@@ -1812,7 +1812,8 @@ static void printVectorList(MCInst *MI, unsigned OpNum, SStream *O,
 	}
 
 	for (i = 0; i < NumRegs; ++i, Reg = getNextVectorRegister(Reg, 1)) {
-		if (GETREGCLASS_CONTAIN0(AArch64_ZPRRegClassID, Reg))
+		bool isZReg = GETREGCLASS_CONTAIN0(AArch64_ZPRRegClassID, Reg);
+		if (isZReg)
 			SStream_concat(O, "%s%s", getRegisterName(Reg, AArch64_NoRegAltName), LayoutSuffix);
 		else
 			SStream_concat(O, "%s%s", getRegisterName(Reg, AArch64_vreg), LayoutSuffix);
@@ -1825,9 +1826,9 @@ static void printVectorList(MCInst *MI, unsigned OpNum, SStream *O,
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
 			MI->ac_idx++;
 #endif
-
+			unsigned regForDetail = isZReg ? Reg : AArch64_map_vregister(Reg);
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
-			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = AArch64_map_vregister(Reg);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = regForDetail;
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].vas = vas;
 			MI->flat_insn->detail->arm64.op_count++;
 		}
