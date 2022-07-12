@@ -257,6 +257,10 @@ static DecodeStatus _getInstruction(cs_struct *ud, MCInst *MI,
 
 	// Calling the auto-generated decoder function.
 	result = decodeInstruction_4(DecoderTable32, MI, insn, Address);
+	// If Decoding fails initially, try Fallback table.
+	if(result == MCDisassembler_Fail){
+		result = decodeInstruction_4(DecoderTableFallback32, MI, insn, Address);	
+	}
 
 	// Init new MCOperand to be used in switch below.
 	// Kind RegVal set inside a case when needed.
