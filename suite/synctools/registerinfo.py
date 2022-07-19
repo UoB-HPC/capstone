@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/python3
+#!/usr/bin/python
 # convert LLVM GenRegisterInfo.inc for Capstone disassembler.
 # by Nguyen Anh Quynh, 2019
 
