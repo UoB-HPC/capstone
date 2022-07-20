@@ -2268,9 +2268,9 @@ void AArch64_init(MCRegisterInfo *MRI)
 			AArch64SubRegIdxRanges, AArch64RegEncodingTable);
 	*/
 
-	MCRegisterInfo_InitMCRegisterInfo(MRI, AArch64RegDesc, 661,
+	MCRegisterInfo_InitMCRegisterInfo(MRI, AArch64RegDesc, 674,
 			0, 0,
-			AArch64MCRegisterClasses, 100,
+			AArch64MCRegisterClasses, 202,
 			0, 0, AArch64RegDiffLists,
 			0,
 			AArch64SubRegIdxLists, 100,
