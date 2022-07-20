@@ -700,24 +700,24 @@ for line in lines:
         break;
       case AliasPatternCond_K_Reg :
         // Operand must be a specific register.
-        allPass = (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == Conds[condIdx].Value);
+        allPass = allPass && (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == Conds[condIdx].Value);
         break;
       case AliasPatternCond_K_TiedReg :
         // Operand must match the register of another operand.
-        allPass = (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == 
+        allPass = allPass && (MCOperand_isReg(opnd) && MCOperand_getReg(opnd) == 
                   MCOperand_getReg(MCInst_getOperand(MI, Conds[condIdx].Value)));
         break;
       case AliasPatternCond_K_Imm :
         // Operand must be a specific immediate.
-        allPass = (MCOperand_isImm(opnd) && MCOperand_getImm(opnd) == Conds[condIdx].Value);
+        allPass = allPass && (MCOperand_isImm(opnd) && MCOperand_getImm(opnd) == Conds[condIdx].Value);
         break;
       case AliasPatternCond_K_RegClass :
         // Operand must be a register in this class. Value is a register class id.
-        allPass = (MCOperand_isReg(opnd) && GETREGCLASS_CONTAIN(Conds[condIdx].Value, (opIdx-1)));
+        allPass = allPass && (MCOperand_isReg(opnd) && GETREGCLASS_CONTAIN(Conds[condIdx].Value, (opIdx-1)));
         break;
       case AliasPatternCond_K_Custom :
         // Operand must match some custom criteria.
-        allPass = AArch64InstPrinterValidateMCOperand(opnd, Conds[condIdx].Value);
+        allPass = allPass && AArch64InstPrinterValidateMCOperand(opnd, Conds[condIdx].Value);
         break;
       case AliasPatternCond_K_Feature :
       case AliasPatternCond_K_NegFeature :
@@ -727,8 +727,6 @@ for line in lines:
       default :
         break;
       }
-      // If one fails, exit
-      if(!allPass) break;
       condIdx++;
     }
     if(allPass){
@@ -770,6 +768,11 @@ for line in lines:
         } else
           printOperand(MI, (unsigned)(AsmString[I++]) - 1, OS);
       } else {
+        if (AsmString[I] == '[') {
+          set_mem_access(MI, true);
+        } else if (AsmString[I] == ']') {
+          set_mem_access(MI, false);
+        }
         SStream_concat1(OS, AsmString[I++]);
       }
     } while (AsmString[I] != '\\0');
