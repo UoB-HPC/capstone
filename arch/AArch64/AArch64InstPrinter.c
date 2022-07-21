@@ -881,6 +881,7 @@ void AArch64_printInst(MCInst *MI, SStream *O, void *Info)
 					}
 #endif
 					MI->flat_insn->detail->arm64.operands[0].type = ARM64_OP_SVCR;
+					MI->flat_insn->detail->arm64.operands[0].sys = (unsigned)ARM64_SYSREG_SVCR;
 					MI->flat_insn->detail->arm64.operands[0].svcr = lookupSVCRByEncoding(MCOperand_getImm(MCInst_getOperand(MI, 0)))->Encoding;
 					MI->flat_insn->detail->arm64.operands[1].type = ARM64_OP_IMM;
 					MI->flat_insn->detail->arm64.operands[1].imm = MCOperand_getImm(MCInst_getOperand(MI, 1));
@@ -2313,6 +2314,7 @@ static void printSVCROp(MCInst *MI, unsigned OpNum, SStream *O)
 #endif
 
 		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_SVCR;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].sys = (unsigned)ARM64_SYSREG_SVCR;
 		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].svcr = svcr->Encoding;
 		MI->flat_insn->detail->arm64.op_count++;
 	}

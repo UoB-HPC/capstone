@@ -1762,6 +1762,7 @@ typedef struct cs_arm64_op {
   } shift;
   arm64_extender ext; ///< extender type of this operand
   arm64_op_type type; ///< operand type
+  arm64_svcr_op svcr; ///< MSR/MRS SVCR instruction variant.
   union {
     arm64_reg reg;	 ///< register value for REG operand
     int64_t imm;	 ///< immediate value, or index for C-IMM or IMM operand
@@ -1770,7 +1771,6 @@ typedef struct cs_arm64_op {
     arm64_pstate pstate; ///< PState field of MSR instruction.
     arm64_sys_op sys;	 ///< IC/DC/AT/TLBI operation (see arm64_ic_op,
 			 ///< arm64_dc_op, arm64_at_op, arm64_tlbi_op)
-    arm64_svcr_op svcr; ///< MSR SVCR instruction variant.
     arm64_prefetch_op prefetch; ///< PRFM operation.
     arm64_barrier_op
 	barrier; ///< Memory barrier operation (ISB/DMB/DSB instructions).
