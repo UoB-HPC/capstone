@@ -588,37 +588,35 @@ void AArch64_printInst(MCInst *MI, SStream *O, void *Info)
 	}
 
 	if ((Opcode == AArch64_ORRXri || Opcode == AArch64_ORRWri) &&
-			(MCOperand_getReg(MCInst_getOperand(MI, 0)) == AArch64_XZR ||
+			(MCOperand_getReg(MCInst_getOperand(MI, 1)) == AArch64_XZR ||
 			 MCOperand_getReg(MCInst_getOperand(MI, 1)) == AArch64_WZR) &&
 			MCOperand_isImm(MCInst_getOperand(MI, 2))) {
 		int RegWidth = Opcode == AArch64_ORRXri ? 64 : 32;
 		uint64_t Value = AArch64_AM_decodeLogicalImmediate(
 				MCOperand_getImm(MCInst_getOperand(MI, 2)), RegWidth);
-		if (!AArch64_AM_isAnyMOVWMovAlias(Value, RegWidth)) {
-			SStream_concat(O, "mov\t%s, ", getRegisterName(MCOperand_getReg(MCInst_getOperand(MI, 0)), AArch64_NoRegAltName));
+		SStream_concat(O, "mov\t%s, ", getRegisterName(MCOperand_getReg(MCInst_getOperand(MI, 0)), AArch64_NoRegAltName));
 
-			printInt64Bang(O, SignExtend64(Value, RegWidth));
+		printInt64Bang(O, SignExtend64(Value, RegWidth));
 
-			if (MI->csh->detail) {
+		if (MI->csh->detail) {
 #ifndef CAPSTONE_DIET
-				uint8_t access;
-				access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
-				MI->ac_idx++;
+			uint8_t access;
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
 #endif
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = MCOperand_getReg(MCInst_getOperand(MI, 0));
-				MI->flat_insn->detail->arm64.op_count++;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = MCOperand_getReg(MCInst_getOperand(MI, 0));
+			MI->flat_insn->detail->arm64.op_count++;
 
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
-				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = SignExtend64(Value, RegWidth);
-				MI->flat_insn->detail->arm64.op_count++;
-			}
-
-			MCInst_setOpcodePub(MI, AArch64_map_insn("mov"));
-
-			return;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_IMM;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].imm = SignExtend64(Value, RegWidth);
+			MI->flat_insn->detail->arm64.op_count++;
 		}
+
+		MCInst_setOpcodePub(MI, AArch64_map_insn("mov"));
+
+		return;
 	}
 
 	// Instruction TSB is specified as a one operand instruction, but 'csync' is
