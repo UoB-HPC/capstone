@@ -2773,6 +2773,8 @@ void AArch64_post_printer(csh handle, cs_insn *flat_insn, char *insn_asm, MCInst
 			case AArch64_LDPWpre:
 			case AArch64_LDPXpost:
 			case AArch64_LDPXpre:
+			case AArch64_LDRAAwriteback:
+			case AArch64_LDRABwriteback:
 			case AArch64_LDRBBpost:
 			case AArch64_LDRBBpre:
 			case AArch64_LDRBpost:
@@ -2837,6 +2839,8 @@ void AArch64_post_printer(csh handle, cs_insn *flat_insn, char *insn_asm, MCInst
 			case AArch64_ST1i32_POST:
 			case AArch64_ST1i64_POST:
 			case AArch64_ST1i8_POST:
+			case AArch64_ST2GPostIndex:
+			case AArch64_ST2GPreIndex:
 			case AArch64_ST2Twov16b_POST:
 			case AArch64_ST2Twov2d_POST:
 			case AArch64_ST2Twov2s_POST:
@@ -2870,6 +2874,10 @@ void AArch64_post_printer(csh handle, cs_insn *flat_insn, char *insn_asm, MCInst
 			case AArch64_ST4i32_POST:
 			case AArch64_ST4i64_POST:
 			case AArch64_ST4i8_POST:
+			case AArch64_STGPostIndex:
+			case AArch64_STGPpost:
+			case AArch64_STGPpre:
+			case AArch64_STGPreIndex:
 			case AArch64_STPDpost:
 			case AArch64_STPDpre:
 			case AArch64_STPQpost:
@@ -2898,8 +2906,10 @@ void AArch64_post_printer(csh handle, cs_insn *flat_insn, char *insn_asm, MCInst
 			case AArch64_STRWpre:
 			case AArch64_STRXpost:
 			case AArch64_STRXpre:
-			case AArch64_LDRAAwriteback:
-			case AArch64_LDRABwriteback:
+			case AArch64_STZ2GPostIndex:
+			case AArch64_STZ2GPreIndex:
+			case AArch64_STZGPostIndex:
+			case AArch64_STZGPreIndex:
 				flat_insn->detail->arm64.writeback = true;
 				break;
 		}
