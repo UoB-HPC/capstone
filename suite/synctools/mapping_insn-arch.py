@@ -92,7 +92,7 @@ def extract_matcher(filename):
                     if not first_insn:
                         arch, first_insn = _arch, insn_id
 
-                    if not insn_id in insn_id_list:
+                    if not insn_id in insn_id_list and mnem.upper() in insn_id:
                         # save this
                         insn_id_list[insn_id] = mnem
 
