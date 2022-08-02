@@ -24270,7 +24270,7 @@
 
 {	/* AArch64_UMOVvi32_idx0, AArch64_INS_MOV: mov */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_UMOVvi64, AArch64_INS_MOV: mov */
@@ -24280,7 +24280,7 @@
 
 {	/* AArch64_UMOVvi64_idx0, AArch64_INS_MOV: mov */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_UMOVvi8, AArch64_INS_UMOV: umov */
