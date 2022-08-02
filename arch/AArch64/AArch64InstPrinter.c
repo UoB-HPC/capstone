@@ -2507,6 +2507,13 @@ static void printSVERegOp(MCInst *MI, unsigned OpNum, SStream *O, char suffix)
 	Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum));
 
 	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
 		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
 		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = Reg;
 		MI->flat_insn->detail->arm64.op_count++;
@@ -2615,9 +2622,22 @@ static void printZPRasFPR(MCInst *MI, unsigned OpNum, SStream *O, int Width)
 		case 128: Base = AArch64_Q0; break;
 	}
 
-	Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum));
+	Reg = MCOperand_getReg(MCInst_getOperand(MI, OpNum)) - AArch64_Z0 + Base;
 
-	SStream_concat0(O, getRegisterName(Reg - AArch64_Z0 + Base, AArch64_NoRegAltName));
+	SStream_concat0(O, getRegisterName(Reg, AArch64_NoRegAltName));
+
+	if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+		uint8_t access;
+
+		access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+		MI->ac_idx++;
+#endif
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_REG;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].reg = Reg;
+		MI->flat_insn->detail->arm64.op_count++;
+	}
 }
 
 static void printExactFPImm(MCInst *MI, unsigned OpNum, SStream *O, unsigned ImmIs0, unsigned ImmIs1)

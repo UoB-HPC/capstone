@@ -3720,7 +3720,7 @@
 
 {	/* AArch64_DUP_ZZI_S, AArch64_INS_DUP: dup */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_DUPi16, AArch64_INS_DUP: dup */
@@ -3730,12 +3730,12 @@
 
 {	/* AArch64_DUPi32, AArch64_INS_DUP: dup */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_DUPi64, AArch64_INS_DUP: dup */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_DUPi8, AArch64_INS_DUP: dup */
@@ -4280,7 +4280,7 @@
 
 {	/* AArch64_FADDA_VPZ_D, AArch64_INS_FADDA: fadda */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, CS_AC_READ, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_FADDA_VPZ_H, AArch64_INS_FADDA: fadda */
@@ -24290,7 +24290,7 @@
 
 {	/* AArch64_UMOVvi8_idx0, AArch64_INS_UMOV: umov */
 	0,
-	{ 0 }
+	{ CS_AC_WRITE, CS_AC_READ, 0 }
 },
 
 {	/* AArch64_UMSUBLrrr, AArch64_INS_UMNEGL: umnegl */
