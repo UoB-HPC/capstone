@@ -13972,6 +13972,7 @@ static void printInstruction(MCInst *MI, SStream *O)
     // CPYE, CPYEN, CPYERN, CPYERT, CPYERTN, CPYERTRN, CPYERTWN, CPYET, CPYET...
     printOperand(MI, 3, O);
     SStream_concat0(O, "]!, [");
+    set_mem_access(MI, false);
     set_mem_access(MI, true);
     printOperand(MI, 4, O);
     SStream_concat0(O, "]!, ");
