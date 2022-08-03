@@ -1131,6 +1131,7 @@ typedef enum arm64_op_type {
   ARM64_OP_SVCR,  ///< SVCR operand for MSR SVCR instructions.
   ARM64_OP_PREFETCH,	///< Prefetch operand (PRFM).
   ARM64_OP_BARRIER,	///< Memory barrier operand (ISB/DMB/DSB instructions).
+  ARM64_OP_SME_INDEX, ///< SME instruction operand with with index.
 } arm64_op_type;
 
 /// SYS operands (IC/DC/AC/TLBI)
@@ -1751,6 +1752,14 @@ typedef struct arm64_op_mem {
   int32_t disp;	   ///< displacement/offset value
 } arm64_op_mem;
 
+/// SME Instruction's operand has index
+/// This is associated with ARM64_OP_SME_INDEX operand type above
+typedef struct arm64_op_sme_index {
+  arm64_reg reg; ///< register being indexed
+  arm64_reg base; ///< base register
+  int32_t disp;   ///< displacement/offset value
+} arm64_op_sme_index;
+
 /// Instruction operand
 typedef struct cs_arm64_op {
   int vector_index; ///< Vector Index for some vector operands (or -1 if
@@ -1773,7 +1782,9 @@ typedef struct cs_arm64_op {
 			 ///< arm64_dc_op, arm64_at_op, arm64_tlbi_op)
     arm64_prefetch_op prefetch; ///< PRFM operation.
     arm64_barrier_op
-	barrier; ///< Memory barrier operation (ISB/DMB/DSB instructions).
+	        barrier; ///< Memory barrier operation (ISB/DMB/DSB instructions).
+    arm64_op_sme_index sme_index; ///< base/disp value for matrix tile slice
+        ///< instructions.
   };
 
   /// How is this operand accessed? (READ, WRITE or READ|WRITE)

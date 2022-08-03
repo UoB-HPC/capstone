@@ -83,6 +83,13 @@ void print_insn_detail_arm64(csh handle, cs_insn *ins)
 				if(op->svcr == ARM64_SVCR_SVCRSMZA)
 					printf("\t\t\toperands[%u].svcr: BIT = SM & ZA\n", i);
 				break;
+			case ARM64_OP_SME_INDEX:
+				printf("\t\toperands[%u].type: REG = %s\n", i, cs_reg_name(handle, op->sme_index.reg));
+				if (op->sme_index.base != ARM64_REG_INVALID)
+					printf("\t\t\toperands[%u].index.base: REG = %s\n", i, cs_reg_name(handle, op->sme_index.base));
+				if (op->sme_index.disp != 0)
+					printf("\t\t\toperands[%u].index.disp: 0x%x\n", i, op->sme_index.disp);
+				break;
 		}
 		
 		access = op->access;
