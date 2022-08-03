@@ -76,6 +76,33 @@ static void op_addImm(MCInst *MI, int v)
 
 static void set_mem_access(MCInst *MI, bool status)
 {
+	// Check if called by SME instruction that uses reg+imm indexing
+	// Get previous operand register, check if ZA or ZA Tile Slice
+	uint8_t opNum = MI->flat_insn->detail->arm64.op_count-1;
+	MCOperand *Op = MCInst_getOperand(MI, opNum);
+	unsigned Opcode = MCInst_getOpcode(MI);
+	if (MCOperand_isReg(Op)) {
+		unsigned Reg = MCOperand_getReg(Op);
+		// Indexing used by ZA Tile Slice or by PSEL instruction
+		if(Reg == ARM64_REG_ZA || (ARM64_REG_ZAB0 <= Reg && Reg <= ARM64_REG_ZAS3)
+		   || (AArch64_PSEL_PPPRI_B <= Opcode && Opcode <= AArch64_PSEL_PPPRI_S)){
+			
+			MI->csh->doing_SME_Index = status;
+
+			if (MI->csh->detail != CS_OPT_ON)
+				return;
+			
+			if (status) {
+				MI->flat_insn->detail->arm64.operands[opNum].type = ARM64_OP_SME_INDEX;
+				MI->flat_insn->detail->arm64.operands[opNum].sme_index.reg = Reg;
+				MI->flat_insn->detail->arm64.operands[opNum].sme_index.base = ARM64_REG_INVALID;
+				MI->flat_insn->detail->arm64.operands[opNum].sme_index.disp = 0;
+			}
+			return;
+		}
+	}
+
+	// Doing Memory Operation
 	MI->csh->doing_mem = status;
 
 	if (MI->csh->detail != CS_OPT_ON)
@@ -1021,6 +1048,9 @@ static void printOperand(MCInst *MI, unsigned OpNum, SStream *O)
 				else if (MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].mem.index == ARM64_REG_INVALID) {
 					MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].mem.index = Reg;
 				}
+			} else if (MI->csh->doing_SME_Index) {
+				// Access op_count-1 as We want to add info to previous operand, not create a new one
+				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count-1].sme_index.base = Reg;
 			} else {
 #ifndef CAPSTONE_DIET
 				uint8_t access;
@@ -1054,6 +1084,9 @@ static void printOperand(MCInst *MI, unsigned OpNum, SStream *O)
 		if (MI->csh->detail) {
 			if (MI->csh->doing_mem) {
 				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].mem.disp = (int32_t)imm;
+			} else if (MI->csh->doing_SME_Index) {
+				// Access op_count-1 as We want to add info to previous operand, not create a new one
+				MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count-1].sme_index.disp = (int32_t)imm; 
 			} else {
 #ifndef CAPSTONE_DIET
 				uint8_t access;
@@ -2368,7 +2401,15 @@ static void printMatrix(MCInst *MI, unsigned OpNum, SStream *O, int EltSize)
 
 static void printMatrixIndex(MCInst *MI, unsigned OpNum, SStream *O)
 {
-	printInt64(O, MCOperand_getImm(MCInst_getOperand(MI, OpNum)));
+	int64_t imm = MCOperand_getImm(MCInst_getOperand(MI, OpNum));
+	printInt64(O, imm);
+
+	if (MI->csh->detail) {
+		if (MI->csh->doing_SME_Index) {
+			// Access op_count-1 as We want to add info to previous operand, not create a new one
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count-1].sme_index.disp = imm;
+		}
+	}
 }
 
 static void printMatrixTile(MCInst *MI, unsigned OpNum, SStream *O)
