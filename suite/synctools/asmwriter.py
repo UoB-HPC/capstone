@@ -312,11 +312,15 @@ for line in lines:
         elif '", -1"' in line2:
             print_line('    op_addImm(MI, -1);')
 
-        if '[' in line2:
+        if '], [' in line2:
+            print_line('    set_mem_access(MI, false);')
+            print_line('    set_mem_access(MI, true);')
+            
+        elif '[' in line2:
             if not '[]' in line2:
                 print_line('    set_mem_access(MI, true);')
 
-        if ']' in line2:
+        elif ']' in line2:
             if not '[]' in line2:
                 print_line('    set_mem_access(MI, false);')
 
