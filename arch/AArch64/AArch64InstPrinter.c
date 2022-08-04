@@ -2157,6 +2157,28 @@ static void printMRSSystemRegister(MCInst *MI, unsigned OpNum, SStream *O)
 		return;
 	}
 
+	// Another hack for a register which has an alternative name which is not an alias,
+	// and is not in the Armv9-A documentation.
+	if( Val == ARM64_SYSREG_VSCTLR_EL2){
+		SStream_concat0(O, "ttbr0_el2");
+
+		if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
+
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_SYS;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].sys = Val;
+			MI->flat_insn->detail->arm64.op_count++;
+		}
+
+		return;
+	}
+
 	// if (Reg && Reg->Readable && Reg->haveFeatures(STI.getFeatureBits()))
 	if (Reg && Reg->Readable) {
 		SStream_concat0(O, Reg->Name);
@@ -2204,6 +2226,28 @@ static void printMSRSystemRegister(MCInst *MI, unsigned OpNum, SStream *O)
 	// going to get the wrong entry
 	if (Val == ARM64_SYSREG_DBGDTRTX_EL0) {
 		SStream_concat0(O, "dbgdtrtx_el0");
+
+		if (MI->csh->detail) {
+#ifndef CAPSTONE_DIET
+			uint8_t access;
+
+			access = get_op_access(MI->csh, MCInst_getOpcode(MI), MI->ac_idx);
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].access = access;
+			MI->ac_idx++;
+#endif
+
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_SYS;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].sys = Val;
+			MI->flat_insn->detail->arm64.op_count++;
+		}
+
+		return;
+	}
+
+	// Another hack for a register which has an alternative name which is not an alias,
+	// and is not in the Armv9-A documentation.
+	if( Val == ARM64_SYSREG_VSCTLR_EL2){
+		SStream_concat0(O, "ttbr0_el2");
 
 		if (MI->csh->detail) {
 #ifndef CAPSTONE_DIET
