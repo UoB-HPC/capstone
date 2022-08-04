@@ -671,10 +671,12 @@ for line in lines:
   const unsigned opcode = MCInst_getOpcode(MI);
 
   // Check for alias
-  int OpToIndex;
-  for(OpToIndex = 0; OpToIndex < OpToSize; OpToIndex++){
-    if(OpToPatterns[OpToIndex].Opcode == opcode)
+  int OpToIndex = 0;
+  for(int i = 0; i < OpToSize; i++){
+    if(OpToPatterns[i].Opcode == opcode){
+      OpToIndex = i;
       break;
+    }
   }
   // Chech for match
   if(opcode != OpToPatterns[OpToIndex].Opcode)
