@@ -2442,7 +2442,7 @@ static void printMatrixTileVector(MCInst *MI, unsigned OpNum, SStream *O, bool I
 	const char *RegName = getRegisterName(Reg, AArch64_NoRegAltName);
 
 	const size_t strLn = strlen(RegName);
-	char RegNameNew[strLn + 2];
+	char *RegNameNew = malloc(sizeof(char) * (strLn + 2));
 	int index = 0;
 	for(int i = 0; i < (strLn + 2); i++){
 		if(RegName[i] != '.'){
