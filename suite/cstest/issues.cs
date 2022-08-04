@@ -132,23 +132,23 @@
 
 !# issue 1856 AArch64 SYS instruction operands: tlbi 1 op
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
-0x1f,0x83,0x08,0xd5 == tlbi vmalle1is ; op_count: 1 ; operands[0].type: SYS = 0x3
+0x1f,0x83,0x08,0xd5 == tlbi vmalle1is ; op_count: 1 ; operands[0].type: SYS = 0x9a
 
 !# issue 1856 AArch64 SYS instruction operands: tlbi 2 op
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
-0x22,0x87,0x08,0xd5 == tlbi vae1, x2 ; op_count: 2 ; operands[0].type: SYS = 0x16
+0x22,0x87,0x08,0xd5 == tlbi vae1, x2 ; op_count: 2 ; operands[0].type: SYS = 0x75
 
 !# issue 1856 AArch64 SYS instruction operands: at
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
-0xc0,0x78,0x0c,0xd5 == at s12e0r, x0 ; op_count: 2 ; operands[0].type: SYS = 0x59
+0xc0,0x78,0x0c,0xd5 == at s12e0r, x0 ; op_count: 2 ; operands[0].type: SYS = 0xaf
 
 !# issue 1856 AArch64 SYS instruction operands: dc
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
-0x22,0x7b,0x0b,0xd5 == dc cvau, x2 ; op_count: 2 ; operands[0].type: SYS = 0x62
+0x22,0x7b,0x0b,0xd5 == dc cvau, x2 ; op_count: 2 ; operands[0].type: SYS = 0xc5
 
 !# issue 1856 AArch64 SYS instruction operands: ic
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
-0x20,0x75,0x0b,0xd5 == ic ivau, x0 ; op_count: 2 ; operands[0].type: SYS = 0x68
+0x20,0x75,0x0b,0xd5 == ic ivau, x0 ; op_count: 2 ; operands[0].type: SYS = 0xd1
 
 !# issue 1843 AArch64 missing VAS specifiers in aliased instructions: mov 16b
 !# CS_ARCH_ARM64, CS_MODE_ARM, CS_OPT_DETAIL
