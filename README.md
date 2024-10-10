@@ -6,6 +6,14 @@ Capstone Engine
 [![pypi package](https://badge.fury.io/py/capstone.svg)](https://pypi.python.org/pypi/capstone)
 [![pypi downloads](https://pepy.tech/badge/capstone)](https://pepy.tech/project/capstone)
 
+## WARNING: When updating this Capstone repo for updating SimEng, the latest upstream Capstone version **MUST** be on a new discrete branch; i.e. `next-SIMENG-VERSION` or `next-CAPSTONE-VERSION`. If this isn't done then all previous versions of SimEng will cease to work.
+
+## Do not delete or update the following branches:
+ - `next` used for SimEng versions 0.9.4 -> 0.9.6
+ - `next-update` used for SimEng versions 0.9.7+
+
+
+## Capstone README:
 Capstone is a disassembly framework with the target of becoming the ultimate
 disasm engine for binary analysis and reversing in the security community.
 
